@@ -4,7 +4,7 @@ namespace OffersPlatform.Domain.Entities;
 
 public class Offer
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public decimal UnitPrice { get; set; }
@@ -16,8 +16,8 @@ public class Offer
     public OfferStatus Status { get; set; }
 
     // Foreign keys
-    public int CompanyId { get; set; }
-    public int CategoryId { get; set; }
+    public Guid CompanyId { get; set; }
+    public Guid CategoryId { get; set; }
 
     // Navigation properties
     public Company? Company { get; set; }

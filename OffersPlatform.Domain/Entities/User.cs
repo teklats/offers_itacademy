@@ -9,7 +9,9 @@ public class User
     public string? LastName { get; set; }
     public string? Email { get; set; }
     public string? UserName { get; set; }
-    public string? Password { get; set; }
+    public string? PasswordHash { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
     public decimal? Balance { get; set; }
     public UserRole Role { get; set; }
     public bool IsActive { get; set; }
@@ -18,3 +20,12 @@ public class User
     public ICollection<Category>? SubscribedCategories { get; set; }
     public ICollection<Purchase>? Purchases { get; set; }
 }
+
+
+// public class User
+// {
+//
+//     // Navigation properties
+//     public ICollection<UserCategoryPreference> CategoryPreferences { get; set; }
+//     public ICollection<Purchase> Purchases { get; set; }
+// }
