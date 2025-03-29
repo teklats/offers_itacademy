@@ -17,15 +17,6 @@ public class User
     public bool IsActive { get; set; }
     
     // Navigation Properties
-    public ICollection<Category>? SubscribedCategories { get; set; }
-    public ICollection<Purchase>? Purchases { get; set; }
+    public IEnumerable<UserCategory>? SubscribedCategories { get; set; }
+    public IEnumerable<Purchase>? Purchases { get; set; }
 }
-
-
-// public class User
-// {
-//
-//     // Navigation properties
-//     public ICollection<UserCategoryPreference> CategoryPreferences { get; set; }
-//     public ICollection<Purchase> Purchases { get; set; }
-// }
