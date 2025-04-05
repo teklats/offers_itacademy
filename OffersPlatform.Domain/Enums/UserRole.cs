@@ -2,7 +2,8 @@ namespace OffersPlatform.Domain.Enums;
 
 public enum UserRole
 {
-    Administrator = 1,
-    Company = 2,
-    Customer = 3
+    Admin = 1,
+    Customer = 2,
+    Company = 3,
+    Guest = 4,
 }

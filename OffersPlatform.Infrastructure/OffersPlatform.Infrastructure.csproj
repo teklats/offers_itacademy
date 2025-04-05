@@ -7,19 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\OffersPlatform.Application\OffersPlatform.Application.csproj" />
-      <ProjectReference Include="..\OffersPlatform.Domain\OffersPlatform.Domain.csproj" />
-      <ProjectReference Include="..\OffersPlatform.Persistence\OffersPlatform.Persistence.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.3" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
+      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
+      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.14" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OffersPlatform.Application\OffersPlatform.Application.csproj" />
+      <ProjectReference Include="..\OffersPlatform.Domain\OffersPlatform.Domain.csproj" />
     </ItemGroup>
 
 </Project>

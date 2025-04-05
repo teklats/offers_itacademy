@@ -10,5 +10,5 @@ public class Category
     
     // Navigation properties
     public ICollection<Offer>? Offers { get; set; }
-    public ICollection<UserCategory>? Subscribers { get; set; }
+    public ICollection<UserCategory>? UserCategories { get; set; }
 }

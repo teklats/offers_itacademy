@@ -14,9 +14,10 @@ public class User
     public DateTime? UpdatedAt { get; set; }
     public decimal? Balance { get; set; }
     public UserRole Role { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
+    
     
     // Navigation Properties
-    public IEnumerable<UserCategory>? SubscribedCategories { get; set; }
+    public IEnumerable<UserCategory>? PreferredCategories { get; set; }
     public IEnumerable<Purchase>? Purchases { get; set; }
 }

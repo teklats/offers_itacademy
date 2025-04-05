@@ -11,19 +11,43 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="12.0.1" />
+      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0-preview1" />
-      <PackageReference Include="MediatR" Version="12.4.1" />
+      <PackageReference Include="MediatR" Version="11.0.0" />
+      <PackageReference Include="MediatR.Extensions.FluentValidation" Version="0.6.0" />
       <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Common\" />
-      <Folder Include="Features\Categories\Commands\" />
-      <Folder Include="Features\Categories\Queries\" />
-      <Folder Include="Features\Offers\Commands\" />
-      <Folder Include="Features\Offers\Queries\" />
-      <Folder Include="Features\Purchases\Commands\" />
-      <Folder Include="Features\Purchases\Queries\" />
+      <Folder Include="Features\Admin\Categories\Commands\CreateCategory\" />
+      <Folder Include="Features\Admin\Categories\Commands\DeleteCategory\" />
+      <Folder Include="Features\Admin\Categories\Commands\UpdateCategory\" />
+      <Folder Include="Features\Admin\Categories\Queries\GetAllCategories\" />
+      <Folder Include="Features\Admin\Categories\Queries\GetCategoryById\" />
+      <Folder Include="Features\Auth\CompanyAuth\Commands\" />
+      <Folder Include="Features\Auth\UserAuth\Commands\" />
+      <Folder Include="Features\Companies\Offers\Commands\CreateOffer\" />
+      <Folder Include="Features\Companies\Offers\Commands\DeleteOffer\" />
+      <Folder Include="Features\Companies\Offers\Commands\UpdateOffer\" />
+      <Folder Include="Features\Companies\Offers\Commands\UploadOfferPicture\" />
+      <Folder Include="Features\Companies\Offers\Queries\GetArchivedOffers\" />
+      <Folder Include="Features\Companies\Offers\Queries\GetCompanyOffers\" />
+      <Folder Include="Features\Companies\Offers\Queries\GetOfferById\" />
+      <Folder Include="Features\Companies\Profile\Commands\UpdateCompanyProfile\" />
+      <Folder Include="Features\Companies\Profile\Commands\UploadCompanyPicture\" />
+      <Folder Include="Features\Companies\Profile\Queries\GetCompanyProfile\" />
+      <Folder Include="Features\Users\Categories\Commands\AddCategories\" />
+      <Folder Include="Features\Users\Categories\Commands\RemoveCategories\" />
+      <Folder Include="Features\Users\Categories\Queries\GetUserCategories\" />
+      <Folder Include="Features\Users\Offers\Commands\CancelPurchase\" />
+      <Folder Include="Features\Users\Offers\Commands\PurchaseOffer\" />
+      <Folder Include="Features\Users\Offers\Queries\GetActiveOffers\" />
+      <Folder Include="Features\Users\Offers\Queries\GetArchievedOffers\" />
+      <Folder Include="Features\Users\Offers\Queries\GetOfferById\" />
+      <Folder Include="Features\Users\Offers\Queries\GetUserPurchase\" />
+      <Folder Include="Features\Users\Profile\Commands\UpdateUserProfile\" />
+      <Folder Include="Features\Users\Profile\Queries\GetUserProfile\" />
     </ItemGroup>
 
 </Project>
