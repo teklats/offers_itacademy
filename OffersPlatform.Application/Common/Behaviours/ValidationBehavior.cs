@@ -22,7 +22,9 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         {
             var context = new ValidationContext<TRequest>(request);
             var validationResults = await Task.WhenAll(
-                _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+                _validators.
+                    Select(v => v.ValidateAsync(context, cancellationToken)))
+                .ConfigureAwait(false);
 
             var failures = validationResults
                 .SelectMany(r => r.Errors)
@@ -33,6 +35,6 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 throw new ValidationException(failures);
         }
 
-        return await next();
+        return await next().ConfigureAwait(false);
     }
 }

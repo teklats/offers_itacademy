@@ -21,12 +21,14 @@ public class CompanyManagementController : ControllerBase
     {
         _mediator = mediator;
     }
-    
+
     [HttpGet("all")]
     public async Task<IActionResult> GetAllCompanies(CancellationToken cancellationToken = default)
     {
         var query = new GetAllCompaniesQuery();
-        var companies = await _mediator.Send(query, cancellationToken);
+        var companies = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(companies);
     }
 
@@ -34,7 +36,9 @@ public class CompanyManagementController : ControllerBase
     public async Task<IActionResult> GetAllActiveCompanies(CancellationToken cancellationToken)
     {
         var query = new GetAllActiveCompaniesQuery();
-        var companies = await _mediator.Send(query, cancellationToken);
+        var companies = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(companies);
     }
 
@@ -42,19 +46,23 @@ public class CompanyManagementController : ControllerBase
     public async Task<IActionResult> GetCompanyById(Guid companyId, CancellationToken cancellationToken)
     {
         var query = new GetCompanyByIdQuery(companyId);
-        var company = await _mediator.Send(query, cancellationToken);
+        var company = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(company);
     }
-    
-    
+
+
     [HttpPut("{companyId}/approve")]
     public async Task<ActionResult> ApproveCompanyStatus(Guid companyId, CompanyStatus status,
         CancellationToken cancellationToken)
     {
         var command = new ApproveCompanyCommand(companyId, CompanyStatus.Active);
-        
-        var result = await _mediator.Send(command, cancellationToken);
-    
+
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
+
         if (result)
         {
             return Ok("Company approved successfully.");
@@ -64,14 +72,16 @@ public class CompanyManagementController : ControllerBase
             return BadRequest("Company is already active.");
         }
     }
-    
+
     [HttpDelete("{companyId}")]
     public async Task<ActionResult> DeleteCompany(Guid companyId,
         CancellationToken cancellationToken)
     {
         var query = new DeleteCompanyCommand(companyId);
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
-    
+
 }

@@ -1,5 +1,3 @@
-using System.Net;
-using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.Exceptions;
@@ -11,17 +9,17 @@ namespace OffersPlatform.Application.Features.Admin.Companies.Commands.ApproveCo
 public class ApproveCompanyCommandHandler : IRequestHandler<ApproveCompanyCommand, bool>
 {
     private readonly ICompanyRepository _companyRepository;
-    private readonly IMapper _mapper;
 
-    public ApproveCompanyCommandHandler(ICompanyRepository companyRepository, IMapper mapper)
+    public ApproveCompanyCommandHandler(ICompanyRepository companyRepository)
     {
         _companyRepository = companyRepository;
-        _mapper = mapper;
     }
 
     public async Task<bool> Handle(ApproveCompanyCommand request, CancellationToken cancellationToken)
     {
-        var company = await _companyRepository.GetCompanyByIdAsync(request.Id, cancellationToken);
+        var company = await _companyRepository
+            .GetCompanyByIdAsync(request.Id, cancellationToken)
+            .ConfigureAwait(false);
 
         if (company is null)
         {
@@ -33,8 +31,10 @@ public class ApproveCompanyCommandHandler : IRequestHandler<ApproveCompanyComman
             return false;
         }
         company.Status = request.Status;
-        await _companyRepository.UpdateAsync(company, cancellationToken);
-        await _companyRepository.SaveAsync(cancellationToken);
+        _companyRepository.UpdateAsync(company);
+        await _companyRepository
+            .SaveAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         return true;
     }

@@ -1,4 +1,3 @@
-using System.Net;
 using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
@@ -20,7 +19,9 @@ public class GetOfferByIdQueryHandler : IRequestHandler<GetOfferByIdQuery, Offer
 
     public async Task<OfferDto> Handle(GetOfferByIdQuery request, CancellationToken cancellationToken)
     {
-        var offer = await _offerRepository.GetByIdAsync(request.OfferId, request.CompanyId, cancellationToken);
+        var offer = await _offerRepository
+            .GetByIdAsync(request.OfferId, request.CompanyId, cancellationToken)
+            .ConfigureAwait(false);
         if (offer is null)
         {
             throw new NotFoundException("Offer Not Found");

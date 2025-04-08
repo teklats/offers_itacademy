@@ -9,7 +9,7 @@ public class Purchase
     public decimal TotalPrice { get; set; }
     public DateTime PurchasedAt { get; set; }
     public PurchaseStatus Status { get; set; }
-    public bool IsCancelled { get; set; } = false;
+    public bool IsCancelled { get; set; }
     public DateTime? CancelledAt { get; set; }
 
     // Foreign keys

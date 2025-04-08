@@ -30,38 +30,44 @@ public class UserOffersController : ControllerBase
         }
         return Guid.Parse(userId);
     }
-    
+
     [HttpGet("offers")]
-    public async Task<IActionResult> GetPreferredActiveOffers()
+    public async Task<IActionResult> GetPreferredActiveOffers(CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        var result = await _mediator.Send(new GetPreferredActiveOffersQuery(userId));
+        var result = await _mediator
+            .Send(new GetPreferredActiveOffersQuery(userId), cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
-    
+
     [HttpPost("offers/{id}/purchase")]
-    public async Task<IActionResult> PurchaseOffer(Guid id, [FromQuery] int quantity)
+    public async Task<IActionResult> PurchaseOffer(Guid id, [FromQuery] int quantity, CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        var purchase = await _mediator.Send(new PurchaseOfferCommand(userId, id, quantity));
+        var purchase = await _mediator
+            .Send(new PurchaseOfferCommand(userId, id, quantity), cancellationToken)
+            .ConfigureAwait(false);
         return Ok(purchase);
     }
-    
+
     [HttpDelete("offers/purchases/{id}")]
-    public async Task<IActionResult> CancelPurchase(Guid id)
+    public async Task<IActionResult> CancelPurchase(Guid id, CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        var cancel = await _mediator.Send(new CancelPurchaseCommand(userId, id));
+        var cancel = await _mediator.Send(new CancelPurchaseCommand(userId, id), cancellationToken).ConfigureAwait(false);
         return Ok(cancel);
     }
 
- 
+
     [HttpGet("purchases")]
-    public async Task<IActionResult> GetPurchaseHistory()
+    public async Task<IActionResult> GetPurchaseHistory(CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        var result = await _mediator.Send(new GetUserPurchaseHistoryQuery(userId));
+        var result = await _mediator
+            .Send(new GetUserPurchaseHistoryQuery(userId), cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
-    
+
 }

@@ -27,7 +27,8 @@ namespace OffersPlatform.Worker
                     {
                         var offerRepo = scope.ServiceProvider.GetRequiredService<IOfferRepository>();
                         _logger.LogInformation("Checking for expired offers at: {time}", DateTimeOffset.Now);
-                        await offerRepo.ArchiveExpiredOffersAsync(stoppingToken);
+                        await offerRepo.ArchiveExpiredOffersAsync(stoppingToken)
+                            .ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -35,7 +36,8 @@ namespace OffersPlatform.Worker
                     }
                 }
 
-                await Task.Delay(_checkInterval, stoppingToken);
+                await Task.Delay(_checkInterval, stoppingToken)
+                    .ConfigureAwait(false);
             }
 
             _logger.LogInformation("Offer archiving worker stopped at: {time}", DateTimeOffset.Now);

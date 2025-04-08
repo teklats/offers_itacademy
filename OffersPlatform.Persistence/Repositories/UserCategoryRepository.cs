@@ -14,30 +14,33 @@ public class UserCategoryRepository : Repository<UserCategory>, IUserCategoryRep
     {
         _dbContext = context;
     }
-    
+
     public async Task<IEnumerable<UserCategory>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.UserCategories
             .Where(uc => uc.UserId == userId)
-            .Include(uc => uc.Category) 
-            .ToListAsync();
+            .Include(uc => uc.Category)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task<UserCategory?> GetByUserIdAndCategoryIdAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.UserCategories
             .Where(uc => uc.UserId == userId && uc.CategoryId == categoryId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
-    
+
     public async Task<List<UserCategory>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.UserCategories
             .Include(uc => uc.User)
             .Include(uc => uc.Category)
-            .ToListAsync();
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
-    
+
     public async Task<UserCategory?> AddCategoryToPreferenceAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken)
     {
         var userCategory = new UserCategory
@@ -48,19 +51,22 @@ public class UserCategoryRepository : Repository<UserCategory>, IUserCategoryRep
         };
 
         _dbContext.UserCategories.Add(userCategory);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken)
+            .ConfigureAwait(false);
         return userCategory;
     }
-    
+
     public async Task<bool> RemoveCategoryFromPreferenceAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken)
     {
         var userPreference = await _dbContext.UserCategories
-            .FirstOrDefaultAsync(up => up.CategoryId == categoryId, cancellationToken);
+            .FirstOrDefaultAsync(up => up.CategoryId == categoryId, cancellationToken)
+            .ConfigureAwait(false);
 
         if (userPreference != null)
         {
             _dbContext.UserCategories.Remove(userPreference);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken)
+                .ConfigureAwait(false);
             return true;
         }
         return false;

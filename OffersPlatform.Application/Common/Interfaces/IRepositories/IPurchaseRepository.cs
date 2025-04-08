@@ -1,6 +1,5 @@
-using OffersPlatform.Domain.Entities;
 namespace OffersPlatform.Application.Common.Interfaces.IRepositories;
-using OffersPlatform.Domain.Entities;
+using Domain.Entities;
 
 public interface IPurchaseRepository
 {

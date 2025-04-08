@@ -19,7 +19,9 @@ public class GetUserCategoriesQueryHandler : IRequestHandler<GetUserCategoriesQu
     public async Task<IEnumerable<CategoryDto>> Handle(GetUserCategoriesQuery request,
         CancellationToken cancellationToken)
     {
-        var preferences = await _userCategoryRepository.GetByUserIdAsync(request.UserId, cancellationToken);
+        var preferences = await _userCategoryRepository
+            .GetByUserIdAsync(request.UserId, cancellationToken)
+            .ConfigureAwait(false);
         return _mapper.Map<IEnumerable<CategoryDto>>(preferences);
     }
 }

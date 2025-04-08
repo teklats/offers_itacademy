@@ -1,4 +1,3 @@
-using OffersPlatform.Domain.Entities;
 using OffersPlatform.Domain.Enums;
 
 namespace OffersPlatform.Application.DTOs;

@@ -18,7 +18,9 @@ public class GetAllOfferQueryHandler : IRequestHandler<GetAllOfferQuery, IEnumer
 
     public async Task<IEnumerable<OfferDto>> Handle(GetAllOfferQuery request, CancellationToken cancellationToken)
     {
-        var offers = await _offerRepository.GetAllOffersAsync(request.CompanyId,cancellationToken);
+        var offers = await _offerRepository
+            .GetAllOffersAsync(request.CompanyId,cancellationToken)
+            .ConfigureAwait(false);
         return _mapper.Map<IEnumerable<OfferDto>>(offers);
     }
 }

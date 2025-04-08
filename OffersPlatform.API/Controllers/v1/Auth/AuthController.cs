@@ -22,29 +22,37 @@ public class AuthController : ControllerBase
     [HttpPost("register/user")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.
+            Send(command, cancellationToken)
+            .ConfigureAwait(false);
         return result != null ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpPost("register/company")]
     public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompanyCommand command, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command, cancellationToken);
-        return result != null ? Ok(result) : BadRequest(result);
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
+        return Ok(result);
     }
 
     [HttpPost("login/user")]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand command, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
         return result != null ? Ok(result) : Unauthorized(result);
     }
-    
+
     [HttpPost("login/company")]
     public async Task<IActionResult> LoginCompany([FromBody] LoginCompanyCommand command, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command, cancellationToken);
-        return result != null ? Ok(result) : Unauthorized(result);
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
+        return Ok(result);
     }
-    
+
 }

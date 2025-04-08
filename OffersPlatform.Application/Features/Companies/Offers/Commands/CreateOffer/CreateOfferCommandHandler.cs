@@ -31,7 +31,9 @@ public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Off
             CompanyId = request.CompanyId,
         };
 
-        await _offerRepository.AddAsync(offer, cancellationToken);
+        await _offerRepository
+            .AddAsync(offer, cancellationToken)
+            .ConfigureAwait(false);
         return offer;
     }
 }

@@ -22,14 +22,18 @@ public class GetPreferredActiveOffersQueryHandler : IRequestHandler<GetPreferred
     public async Task<IEnumerable<OfferDto>> Handle(GetPreferredActiveOffersQuery request,
         CancellationToken cancellationToken)
     {
-        var userCategories = await _userCategoryRepository.GetByUserIdAsync(request.UserId, cancellationToken);
+        var userCategories = await _userCategoryRepository
+            .GetByUserIdAsync(request.UserId, cancellationToken)
+            .ConfigureAwait(false);
         var categoryIds = userCategories.Select(uc => uc.CategoryId).ToList();
 
         if (!categoryIds.Any())
             return Enumerable.Empty<OfferDto>();
 
-        var offers = await _offerRepository.GetByCategoryIdsAsync(categoryIds, cancellationToken);
+        var offers = await _offerRepository
+            .GetByCategoryIdsAsync(categoryIds, cancellationToken)
+            .ConfigureAwait(false);
         return _mapper.Map<IEnumerable<OfferDto>>(offers);
-        
+
     }
 }

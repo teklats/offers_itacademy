@@ -16,12 +16,16 @@ public class RemoveCategoryCommandHandler : IRequestHandler<RemoveCategoryComman
 
     public async Task<bool> Handle(RemoveCategoryCommand request, CancellationToken cancellationToken)
     {
-        var exist = await _userCategoryRepository.GetByUserIdAndCategoryIdAsync(request.UserId, request.CategoryId, cancellationToken);
+        var exist = await _userCategoryRepository
+            .GetByUserIdAndCategoryIdAsync(request.UserId, request.CategoryId, cancellationToken)
+            .ConfigureAwait(false);
         if (exist is null)
         {
             throw new NotFoundException("Category Not Found");
         }
-        
-        return await _userCategoryRepository.RemoveCategoryFromPreferenceAsync(request.UserId, request.CategoryId, cancellationToken);
+
+        return await _userCategoryRepository
+            .RemoveCategoryFromPreferenceAsync(request.UserId, request.CategoryId, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

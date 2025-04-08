@@ -2,7 +2,7 @@ using OffersPlatform.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 
-using AutoMapper; 
+using AutoMapper;
 
 namespace OffersPlatform.Persistence.Repositories
 {
@@ -19,7 +19,8 @@ namespace OffersPlatform.Persistence.Repositories
 
         public async Task AddAsync(T entity, CancellationToken cancellationToken)
         {
-            await _dbSet.AddAsync(entity, cancellationToken);
+            await _dbSet.AddAsync(entity, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public void Update(T entity)
@@ -34,7 +35,8 @@ namespace OffersPlatform.Persistence.Repositories
 
         public async Task SaveAsync(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

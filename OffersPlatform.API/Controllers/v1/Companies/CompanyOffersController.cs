@@ -3,11 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OffersPlatform.Application.DTOs;
+using OffersPlatform.Application.Exceptions;
 using OffersPlatform.Application.Features.Companies.Offers.Commands.CancelOffer;
 using OffersPlatform.Application.Features.Companies.Offers.Commands.CreateOffer;
 using OffersPlatform.Application.Features.Companies.Offers.Queries.GetCompanyOffers;
 using OffersPlatform.Application.Features.Companies.Offers.Queries.GetOfferById;
-using OffersPlatform.Domain.Entities;
 
 namespace OffersPlatform.API.Controllers.v1.Companies;
 
@@ -22,62 +22,62 @@ public class CompanyOffersController : ControllerBase
     {
         _mediator = mediator;
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> GetCompanyAllOffers()
+
+    private Guid GetCompanyId()
     {
         var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(currentCompanyId, out var companyId))
         {
-            return Forbid("Invalid user ID.");
+            throw new NotFoundException("Company Not Found");
         }
-        var query = new GetAllOfferQuery(companyId);
-        var result = await _mediator.Send(query);
+        return companyId;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCompanyAllOffers(CancellationToken cancellationToken)
+    {
+
+        var query = new GetAllOfferQuery(GetCompanyId());
+        var result = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetOfferDetails(Guid id)
+    public async Task<IActionResult> GetOfferDetails(Guid id, CancellationToken cancellationToken)
     {
-        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(currentCompanyId, out var companyId))
-        {
-            return Forbid("Invalid user ID.");
-        }
-        var query = new GetOfferByIdQuery(companyId, id);
-        var result = await _mediator.Send(query);
+        var query = new GetOfferByIdQuery(GetCompanyId(), id);
+        var result = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateOffer([FromBody] OfferCreateDto request)
+    public async Task<IActionResult> CreateOffer([FromBody] OfferCreateDto request, CancellationToken cancellationToken)
     {
-        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(currentCompanyId, out var companyId))
-        {
-            return Forbid("Invalid user ID.");
-        }
-        var command = new CreateOfferCommand(request, companyId);
-        var result = await _mediator.Send(command);
+
+        var command = new CreateOfferCommand(request, GetCompanyId());
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> CancelOffer(Guid Id)
+    public async Task<IActionResult> CancelOffer(Guid Id, CancellationToken cancellationToken)
     {
-        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(currentCompanyId, out var companyId))
-        {
-            return Forbid("Invalid user ID.");
-        }
-        var command = new CancelOfferCommand(companyId, Id);
-        var result = await _mediator.Send(command);
+        var command = new CancelOfferCommand(GetCompanyId(), Id);
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
 
-    [HttpPost("{id}/photo")]
-    public async Task<IActionResult> UploadOfferPhoto(Guid id)
-    {
-        return Ok();
-    }
+    // [HttpPost("{id}/photo")]
+    // public async Task<IActionResult> UploadOfferPhoto(Guid id)
+    // {
+    //     return Ok();
+    // }
 }

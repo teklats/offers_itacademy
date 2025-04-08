@@ -30,12 +30,14 @@ public class UserProfileController : ControllerBase
         }
         return Guid.Parse(userId);
     }
-    
+
     [HttpGet("")]
     public async Task<IActionResult> GetUserProfile(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetUserByIdQuery(id);
-        var user = await _mediator.Send(query, cancellationToken);
+        var user = await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(user);
     }
 
@@ -43,7 +45,9 @@ public class UserProfileController : ControllerBase
     public async Task<IActionResult> AddToBalance(decimal balance, CancellationToken cancellationToken = default)
     {
         var command = new UpdateUserBalanceCommand(GetUserId(), balance);
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
         return Ok(result);
     }
 
@@ -55,8 +59,10 @@ public class UserProfileController : ControllerBase
             return BadRequest("Invalid user id");
         }
         var query = new DeleteUserCommand(id);
-        await _mediator.Send(query, cancellationToken);
+        await _mediator
+            .Send(query, cancellationToken)
+            .ConfigureAwait(false);
         return Ok();
     }
-    
+
 }

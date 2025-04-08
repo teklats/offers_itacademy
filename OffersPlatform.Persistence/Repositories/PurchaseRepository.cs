@@ -16,8 +16,12 @@ public class PurchaseRepository : IPurchaseRepository
 
     public async Task AddAsync(Purchase purchase, CancellationToken cancellationToken)
     {
-        await _context.Purchases.AddAsync(purchase, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.Purchases
+            .AddAsync(purchase, cancellationToken)
+            .ConfigureAwait(false);
+        await _context
+            .SaveChangesAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task<Purchase?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -25,7 +29,8 @@ public class PurchaseRepository : IPurchaseRepository
         return await _context.Purchases
             .Include(p => p.Offer)
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task<IEnumerable<Purchase>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
@@ -33,35 +38,40 @@ public class PurchaseRepository : IPurchaseRepository
         return await _context.Purchases
             .Where(p => p.UserId == userId)
             .Include(p => p.Offer)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
-    
+
     public async Task<IEnumerable<Purchase>> GetByOfferIdAsync(Guid offerId, CancellationToken cancellationToken)
     {
         return await _context.Purchases
             .Where(p => p.OfferId == offerId)
             .Include(p => p.UserId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
-    
+
     public async Task<IEnumerable<Guid>> GetUserByPurchaseId(Guid purchaseId, CancellationToken cancellationToken)
     {
         return await _context.Purchases
             .Where(p => p.Id == purchaseId)
             .Include(p => p.UserId)
             .Select(p => p.UserId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task DeleteAsync(Purchase purchase, CancellationToken cancellationToken)
     {
         _context.Purchases.Remove(purchase);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(Purchase purchase, CancellationToken cancellationToken)
     {
         _context.Purchases.Update(purchase);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 }

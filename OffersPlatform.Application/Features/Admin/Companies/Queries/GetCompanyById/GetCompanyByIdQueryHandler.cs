@@ -19,7 +19,9 @@ public class GetCompanyByIdQueryHandler : IRequestHandler<GetCompanyByIdQuery, C
 
     public async Task<CompanyDto> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
     {
-        var company = await _companyRepository.GetCompanyByIdAsync(request.Id, cancellationToken);
+        var company = await _companyRepository
+            .GetCompanyByIdAsync(request.Id, cancellationToken)
+            .ConfigureAwait(false);
 
         if (company is null)
         {

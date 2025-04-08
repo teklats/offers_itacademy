@@ -1,5 +1,6 @@
 using AutoMapper;
 using OffersPlatform.Application.DTOs;
+using OffersPlatform.Domain.Entities;
 using OffersPlatform.Domain.Enums;
 
 namespace OffersPlatform.Application.Mapping;

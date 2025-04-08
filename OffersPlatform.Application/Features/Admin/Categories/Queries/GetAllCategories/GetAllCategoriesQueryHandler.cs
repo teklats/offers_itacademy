@@ -2,7 +2,6 @@ using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
-using OffersPlatform.Application.Exceptions;
 
 namespace OffersPlatform.Application.Features.Admin.Categories.Queries.GetAllCategories;
 
@@ -20,8 +19,10 @@ public class GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuer
     public async Task<IEnumerable<CategoryDto>> Handle(GetAllCategoriesQuery request,
         CancellationToken cancellationToken)
     {
-        var categories = await _categoryRepository.GetAllAsync(cancellationToken);
-        
+        var categories = await _categoryRepository
+            .GetAllAsync(cancellationToken)
+            .ConfigureAwait(false);
+
         return _mapper.Map<IEnumerable<CategoryDto>>(categories);
     }
 }

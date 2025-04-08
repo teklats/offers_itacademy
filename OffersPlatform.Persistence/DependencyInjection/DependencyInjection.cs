@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
-using OffersPlatform.Application.Mapping;
 using OffersPlatform.Persistence.Context;
 using OffersPlatform.Persistence.Repositories;
 using OffersPlatform.Persistence.Seed;
@@ -14,11 +12,11 @@ namespace OffersPlatform.Persistence.DependencyInjection;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPersistanceServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Register repositories
@@ -31,9 +29,9 @@ public static class DependencyInjection
 
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        
+
         services.AddScoped<AdminSeeder>();
-        
+
         return services;
     }
 }

@@ -1,4 +1,3 @@
-using System.Net;
 using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
@@ -21,12 +20,14 @@ public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery,
 
     public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetByIdAsync(request.Id, cancellationToken);
+        var category = await _categoryRepository
+            .GetByIdAsync(request.Id, cancellationToken)
+            .ConfigureAwait(false);
         if (category is null)
         {
             throw new NotFoundException("Category Not Found");
         }
         return _mapper.Map<CategoryDto>(category);
     }
-    
+
 }

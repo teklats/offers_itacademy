@@ -23,7 +23,9 @@ public class AdminSeeder
         {
             Console.WriteLine("Checking if Admin user exists...");
 
-            if (!await _context.Users.AnyAsync(u => u.Role == UserRole.Admin))
+            if (!await _context.Users.
+                    AnyAsync(u => u.Role == UserRole.Admin)
+                    .ConfigureAwait(false))
             {
                 Console.WriteLine("Admin user not found. Creating...");
 
@@ -36,7 +38,9 @@ public class AdminSeeder
                     Password = "admin"
                 };
 
-                var result = await _mediator.Send(adminUser);
+                var result = await _mediator
+                    .Send(adminUser)
+                    .ConfigureAwait(false);
                 Console.WriteLine($"Admin creation result: {result}");
             }
             else

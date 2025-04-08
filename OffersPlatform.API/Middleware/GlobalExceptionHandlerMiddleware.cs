@@ -1,5 +1,4 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OffersPlatform.Application.Exceptions;
 
@@ -8,27 +7,26 @@ namespace OffersPlatform.API.Middleware;
 public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
 
-    public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
+    public GlobalExceptionHandlerMiddleware(RequestDelegate next)
     {
         _next = next;
-        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
     {
         try
         {
-            await _next(httpContext);
+            await _next(httpContext).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(httpContext, ex);
+            await HandleExceptionAsync(httpContext, ex)
+                .ConfigureAwait(false);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
         var error = new ApiError(context, ex);
 
@@ -38,17 +36,19 @@ public class GlobalExceptionHandlerMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = error.Status;
 
-        await context.Response.WriteAsync(result);
+        await context.Response
+            .WriteAsync(result)
+            .ConfigureAwait(false);
     }
 
     public class ApiError
     {
-        public string Code { get; set; }
-        public string Title { get; set; }
-        public int Status { get; set; }
-        public string TraceId { get; set; }
-        public string Instance { get; set; }
-        
+        public string Code;
+        public string Title;
+        public int Status;
+        public string TraceId;
+        public string Instance;
+
         public ApiError(HttpContext httpContext, Exception exception)
         {
             TraceId = httpContext.TraceIdentifier;
@@ -83,7 +83,7 @@ public class GlobalExceptionHandlerMiddleware
             Status = (int)HttpStatusCode.Conflict;
             Title = exception.Message;
         }
-        
+
         private void HandleException(BadRequestException exception)
         {
             Code = exception.Code;
@@ -97,6 +97,6 @@ public class GlobalExceptionHandlerMiddleware
             Status = (int)HttpStatusCode.Unauthorized;
             Title = exception.Message;
         }
-        
+
     }
 }

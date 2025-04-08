@@ -18,8 +18,10 @@ public class UpdateUserBalanceCommandHandler : IRequestHandler<UpdateUserBalance
 
     public async Task<UserBalanceDto> Handle(UpdateUserBalanceCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.UpdateUserBalanceAsync(request.Id, request.Balance, cancellationToken);
-        
+        var user = await _userRepository
+            .UpdateUserBalanceAsync(request.Id, request.Balance, cancellationToken)
+            .ConfigureAwait(false);
+
         return _mapper.Map<UserBalanceDto>(user);
     }
 }

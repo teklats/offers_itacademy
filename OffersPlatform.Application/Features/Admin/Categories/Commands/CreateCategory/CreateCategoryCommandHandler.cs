@@ -28,7 +28,8 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             UpdatedAt = DateTime.UtcNow,
         };
 
-        await _categoryRepository.AddAsync(category, cancellationToken);
+        await _categoryRepository.AddAsync(category, cancellationToken)
+            .ConfigureAwait(false);
 
         return _mapper.Map<CategoryDto>(category);
     }

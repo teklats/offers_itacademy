@@ -1,4 +1,3 @@
-using System.Net;
 using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
@@ -20,8 +19,10 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto
 
     public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        
-        var user = await _userRepository.GetActiveUserByIdAsync(request.Id, cancellationToken);
+
+        var user = await _userRepository
+            .GetActiveUserByIdAsync(request.Id, cancellationToken)
+            .ConfigureAwait(false);
         if (user is null)
         {
             throw new NotFoundException("User Not Found");

@@ -18,8 +18,10 @@ public class GetAllUserQueryHandler : IRequestHandler<GetAllUserQuery, IEnumerab
     }
     public async Task<IEnumerable<UserDto?>> Handle(GetAllUserQuery request, CancellationToken cancellationToken)
     {
-        var users = await _userRepository.GetAllActiveUsersAsync(cancellationToken);
-        
+        var users = await _userRepository
+            .GetAllActiveUsersAsync(cancellationToken)
+            .ConfigureAwait(false);
+
         return _mapper.Map<IEnumerable<UserDto>>(users);
     }
 }

@@ -1,4 +1,3 @@
-using System.Net;
 using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces;
@@ -28,23 +27,29 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, A
     public async Task<AuthDto?> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         var hashedPassword = _passwordHasher.HashPassword(request.Password);
-        var existingUser = await _userRepository.GetActiveUserByEmailAsync(request.Email, cancellationToken);
-        
+        var existingUser = await _userRepository.
+            GetActiveUserByEmailAsync(request.Email, cancellationToken)
+            .ConfigureAwait(false);
+
         if (existingUser != null)
         {
             throw new AlreadyExistsException("User Already Exists.");
         }
-        
+
         var user = _mapper.Map<User>(request);
 
         user.PasswordHash = hashedPassword;
         user.IsActive = true;
         user.CreatedAt = DateTime.UtcNow;
 
-        await _userRepository.AddAsync(user, cancellationToken);
-        await _userRepository.SaveAsync(cancellationToken);
+        await _userRepository.
+            AddAsync(user, cancellationToken)
+            .ConfigureAwait(false);
+        await _userRepository.
+            SaveAsync(cancellationToken)
+            .ConfigureAwait(false);
 
-        var token = await _authService.RegisterUserAsync(user, hashedPassword, cancellationToken);
+        var token = _authService.RegisterUser(user, hashedPassword);
 
         return new AuthDto
         {
@@ -53,6 +58,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, A
             Id = user.Id,
             Email = user.Email,
         };
-        
+
     }
 }

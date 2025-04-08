@@ -1,4 +1,3 @@
-using System.Net;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
@@ -26,7 +25,9 @@ public class RegisterCompanyCommandHandler : IRequestHandler<RegisterCompanyComm
     public async Task<AuthDto?> Handle(RegisterCompanyCommand command, CancellationToken cancellationToken)
     {
         var hashedPassword = _passwordHasher.HashPassword(command.Password);
-        if (await _companyRepository.GetCompanyByEmailAsync(command.Email, cancellationToken) is not null)
+        if (await _companyRepository.
+                GetCompanyByEmailAsync(command.Email, cancellationToken)
+                .ConfigureAwait(false) is not null)
         {
             throw new AlreadyExistsException("Company Already Exists.");
         }
@@ -41,8 +42,8 @@ public class RegisterCompanyCommandHandler : IRequestHandler<RegisterCompanyComm
             UpdatedAt = DateTime.Now,
             Status = CompanyStatus.Inactive
         };
-        await _companyRepository.AddAsync(company, cancellationToken);
-        var token = await _authService.RegisterCompanyAsync(company, hashedPassword, cancellationToken);
+        await _companyRepository.AddAsync(company, cancellationToken).ConfigureAwait(false);
+        var token = _authService.RegisterCompany(company, hashedPassword);
         return new AuthDto
         {
             Token = token,

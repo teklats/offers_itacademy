@@ -14,7 +14,9 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand,
 
     public async Task<Unit> Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
     {
-        await _companyRepository.SoftDeleteAsync(request.CompanyId, cancellationToken);
+        await _companyRepository
+            .SoftDeleteAsync(request.CompanyId, cancellationToken)
+            .ConfigureAwait(false);
         return Unit.Value;
     }
 }

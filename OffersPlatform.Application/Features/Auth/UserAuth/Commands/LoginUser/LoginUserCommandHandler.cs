@@ -21,29 +21,33 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthDto
     {
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             throw new BadRequestException("Email and password must be provided.");
-        
-        var user = await _userRepository.GetActiveUserByEmailAsync(request.Email, cancellationToken);
-        
+
+        var user = await _userRepository.
+            GetActiveUserByEmailAsync(request.Email, cancellationToken)
+            .ConfigureAwait(false);
+
         if (user is null)
         {
             throw new NotFoundException("User Not Found.");
         }
-        
-        var userPasswordHash = await _userRepository.GetPasswordHashAsync(request.Email, cancellationToken);
-        
+
+        var userPasswordHash = await _userRepository.
+            GetPasswordHashAsync(request.Email, cancellationToken)
+            .ConfigureAwait(false);
+
         bool isPasswordValid = _passwordHasher.VerifyPassword(userPasswordHash, request.Password);
         if (!isPasswordValid)
         {
             throw new BadRequestException("Invalid password.");
         }
-        
-        var token = await _authService.LoginAsync(user.Role, user.Id, cancellationToken);
-        
+
+        var token = _authService.Login(user.Role, user.Id);
+
         return new AuthDto
         {
             Id = user.Id,
-            Name = user?.UserName,
-            Email = user?.Email,
+            Name = user.UserName,
+            Email = user.Email,
             Token = token
         };
     }

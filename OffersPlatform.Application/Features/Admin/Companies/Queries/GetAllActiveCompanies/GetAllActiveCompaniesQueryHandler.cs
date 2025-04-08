@@ -1,10 +1,7 @@
-
-using System.Net;
 using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
-using OffersPlatform.Application.Exceptions;
 
 namespace OffersPlatform.Application.Features.Admin.Companies.Queries.GetAllActiveCompanies;
 
@@ -22,8 +19,10 @@ public class GetAllActiveCompaniesQueryHandler : IRequestHandler<GetAllActiveCom
     public async Task<IEnumerable<CompanyDto?>> Handle(GetAllActiveCompaniesQuery request,
         CancellationToken cancellationToken)
     {
-        var companies = await _companyRepository.GetAllActiveCompaniesAsync(cancellationToken);
- 
+        var companies = await _companyRepository
+            .GetAllActiveCompaniesAsync(cancellationToken)
+            .ConfigureAwait(false);
+
         return _mapper.Map<IEnumerable<CompanyDto>>(companies);
     }
 }

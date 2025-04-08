@@ -19,7 +19,9 @@ public class GetUserPurchaseHistoryQueryHandler : IRequestHandler<GetUserPurchas
     public async Task<IEnumerable<PurchaseDto>> Handle(GetUserPurchaseHistoryQuery request,
         CancellationToken cancellationToken)
     {
-        var purchases = await _purchaseRepository.GetByUserIdAsync(request.UserId, cancellationToken);
+        var purchases = await _purchaseRepository
+            .GetByUserIdAsync(request.UserId, cancellationToken)
+            .ConfigureAwait(false);
         return _mapper.Map<IEnumerable<PurchaseDto>>(purchases);
     }
 }

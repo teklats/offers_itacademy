@@ -3,7 +3,6 @@ using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
 using OffersPlatform.Application.Exceptions;
-using OffersPlatform.Application.Features.Auth.CompanyAuth.Commands.LoginCompany;
 
 namespace OffersPlatform.Application.Features.Auth.CompanyAuth.Commands.LoginCompany;
 
@@ -24,29 +23,33 @@ public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, A
   {
     if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
       throw new BadRequestException("Email and password must be provided.");
-        
-    var company = await _companyRepository.GetCompanyByEmailAsync(request.Email, cancellationToken);
-        
+
+    var company = await _companyRepository.
+        GetCompanyByEmailAsync(request.Email, cancellationToken)
+        .ConfigureAwait(false);
+
     if (company is null)
     {
       throw new NotFoundException("Company Not Found.");
     }
-        
-    var companyPasswordHash = await _companyRepository.GetPasswordHashAsync(request.Email, cancellationToken);
-        
+
+    var companyPasswordHash = await _companyRepository.
+        GetPasswordHashAsync(request.Email, cancellationToken)
+        .ConfigureAwait(false);
+
     bool isPasswordValid = _passwordHasher.VerifyPassword(companyPasswordHash, request.Password);
     if (!isPasswordValid)
     {
       throw new BadRequestException("Invalid password.");
     }
-        
-    var token = await _authService.LoginAsync(company.Role, company.Id, cancellationToken);
-        
+
+    var token = _authService.Login(company.Role, company.Id);
+
     return new AuthDto
     {
       Id = company.Id,
-      Name = company?.Name,
-      Email = company?.Email,
+      Name = company.Name,
+      Email = company.Email,
       Token = token
     };
   }
