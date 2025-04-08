@@ -4,7 +4,7 @@ namespace OffersPlatform.Domain.Entities;
 
 public class Purchase
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public int Quantity { get; set; }
     public decimal TotalPrice { get; set; }
     public DateTime PurchasedAt { get; set; }

@@ -10,4 +10,10 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OffersPlatform.Application\OffersPlatform.Application.csproj" />
+      <ProjectReference Include="..\OffersPlatform.Domain\OffersPlatform.Domain.csproj" />
+      <ProjectReference Include="..\OffersPlatform.Persistence\OffersPlatform.Persistence.csproj" />
+    </ItemGroup>
 </Project>

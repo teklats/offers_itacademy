@@ -30,7 +30,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         
         builder.Property(x=> x.Role)
             .IsRequired();
-        
+        builder.Property(x=> x.Balance)
+            .IsRequired()
+            .HasDefaultValue(0);
         
         builder.HasIndex(u => u.Email)
             .IsUnique();

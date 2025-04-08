@@ -2,7 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using OffersPlatform.Application.Behaviours;
+using OffersPlatform.Application.Common.Behaviours;
 
 namespace OffersPlatform.Application.DependencyInjection;
 

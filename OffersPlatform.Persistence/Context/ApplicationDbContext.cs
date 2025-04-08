@@ -31,6 +31,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.Property(e => e.Role).IsRequired().HasConversion<string>();
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e=> e.Balance).IsRequired().HasDefaultValue(0);
 
             entity.HasMany(e => e.Purchases)
                 .WithOne(p => p.User)
@@ -55,6 +56,7 @@ public class ApplicationDbContext : DbContext
                 .HasDefaultValue(CompanyStatus.Inactive);
             entity.Property(c => c.CreatedAt).IsRequired();
             entity.Property(c => c.ImageUrl).HasMaxLength(500);
+            entity.Property(c => c.Balance).IsRequired().HasDefaultValue(0);
    
             entity.Property(c => c.Role)
                 .HasConversion<int>()
@@ -93,10 +95,11 @@ public class ApplicationDbContext : DbContext
                   .HasForeignKey(e => e.CompanyId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(e => e.Category)
-                  .WithMany()
-                  .HasForeignKey(e => e.CategoryId)
-                  .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Offer>()
+                .HasOne(o => o.Category)
+                .WithMany(c => c.Offers)
+                .HasForeignKey(o => o.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Purchase>(entity =>
@@ -124,12 +127,12 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => new { e.UserId, e.CategoryId });
 
             entity.HasOne(up => up.User)
-                  .WithMany(u => u.PreferredCategories)
-                  .HasForeignKey(up => up.UserId);
+                .WithMany(u => u.PreferredCategories)
+                .HasForeignKey(up => up.UserId);
 
             entity.HasOne(up => up.Category)
-                  .WithMany()
-                  .HasForeignKey(up => up.CategoryId);
+                .WithMany(c => c.UserCategories)
+                .HasForeignKey(up => up.CategoryId);
         });
     }
 }

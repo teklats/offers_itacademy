@@ -1,7 +1,9 @@
+using System.Net;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
+using OffersPlatform.Application.Exceptions;
 using OffersPlatform.Domain.Entities;
 using OffersPlatform.Domain.Enums;
 using OffersPlatform.Persistence.Context;
@@ -11,19 +13,17 @@ namespace OffersPlatform.Persistence.Repositories;
 public class CompanyRepository : Repository<Company>, ICompanyRepository
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public CompanyRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
+    public CompanyRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
-        _mapper = mapper;
     }
 
-    public async Task<CompanyDto?> GetCompanyByEmailAsync(string? email, CancellationToken cancellationToken = default)
+    public async Task<Company?> GetCompanyByEmailAsync(string? email, CancellationToken cancellationToken = default)
     {
         var company = await _dbContext.Companies.
             FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
-        return _mapper.Map<CompanyDto>(company);
+        return company;
     }
     
 
@@ -33,25 +33,36 @@ public class CompanyRepository : Repository<Company>, ICompanyRepository
         return company;
     }
 
-    public async Task<IEnumerable<CompanyDto?>> GetAllActiveCompaniesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Company?>> GetAllActiveCompaniesAsync(CancellationToken cancellationToken = default)
     {
         var companies = await _dbContext.Companies.
             Where(x => x.Status == CompanyStatus.Active).
             ToListAsync(cancellationToken);
-        return _mapper.Map<IEnumerable<CompanyDto>>(companies);
+        return companies;
     }
     
-    public async Task<IEnumerable<CompanyDto?>> GetAllCompaniesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Company?>> GetAllCompaniesAsync(CancellationToken cancellationToken = default)
     {
         var companies = await _dbContext.Companies.
             Where(x => x.Status == CompanyStatus.Active || x.Status == CompanyStatus.Inactive).
             ToListAsync(cancellationToken);
-        return _mapper.Map<IEnumerable<CompanyDto>>(companies);
+        return companies;
+    }
+
+    public async Task<string> GetPasswordHashAsync(string? email, CancellationToken cancellationToken = default)
+    {
+        var passwordHash = await _dbContext.Companies
+            .Where(x => x.Email == email)
+            .Select(x => x.PasswordHash)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        return passwordHash;
     }
     
     public async Task AddAsync(Company company, CancellationToken cancellationToken = default)
     {
         await _dbContext.Companies.AddAsync(company, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(Company company, CancellationToken cancellationToken = default)
@@ -64,7 +75,7 @@ public class CompanyRepository : Repository<Company>, ICompanyRepository
         var company = await _dbContext.Companies.FindAsync(new object[] { id }, cancellationToken);
         if (company == null)
         {
-            throw new Exception("Company not found.");
+            throw new NotFoundException("Company Not Found");
         }
 
         if (company.Status == CompanyStatus.Deleted)

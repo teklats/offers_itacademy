@@ -1,27 +1,32 @@
+using System.Net;
+using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
+using OffersPlatform.Application.Exceptions;
 
 namespace OffersPlatform.Application.Features.Admin.Users.Queries.GetUserById;
 
 public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public GetUserByIdQueryHandler(IUserRepository userRepository)
+    public GetUserByIdQueryHandler(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
     public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         
         var user = await _userRepository.GetActiveUserByIdAsync(request.Id, cancellationToken);
-        if (user == null)
+        if (user is null)
         {
-            throw new Exception("User Not Found");
+            throw new NotFoundException("User Not Found");
         }
 
-        return user;
+        return _mapper.Map<UserDto>(user);
     }
 }

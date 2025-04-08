@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
-using OffersPlatform.Application.Mapping;
+using OffersPlatform.Application.Exceptions;
 using OffersPlatform.Domain.Entities;
 using OffersPlatform.Domain.Enums;
 
@@ -43,30 +43,11 @@ public class JwtAuthService : IAuthService
     }
     
 
-    public async Task<string> LoginAsync(string? email, string? password, CancellationToken cancellationToken = default)
+    public async Task<string> LoginAsync(UserRole role, Guid id, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-            throw new ArgumentException("Email and password must be provided.");
-
-        // Try finding a user
-        var userDto = await _userRepository.GetActiveUserByEmailAsync(email, cancellationToken);
-        if (userDto != null)
-        {
-            var user = _mapper.Map<User>(userDto);
-            return GenerateJwtToken(user.Role, user.Id);
-        }
-
-        // Try finding a company
-        var companyDto = await _companyRepository.GetCompanyByEmailAsync(email, cancellationToken);
-        if (companyDto != null)
-        {
-            var company = _mapper.Map<CompanyDto>(companyDto);
-            return GenerateJwtToken(company.Role, company.Id);
-        }
-
-        // If neither matched
-        throw new UnauthorizedAccessException("Invalid email or password.");
+        return GenerateJwtToken(role, id);
     }
+    
 
 
     private string GenerateJwtToken(UserRole role, Guid id)

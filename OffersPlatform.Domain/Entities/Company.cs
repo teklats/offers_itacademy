@@ -10,6 +10,7 @@ public class Company
     public string? Email { get; set; } = string.Empty;
     public string? PasswordHash { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
+    public decimal Balance { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public UserRole Role { get; set; } = UserRole.Company;

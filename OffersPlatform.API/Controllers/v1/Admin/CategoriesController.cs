@@ -1,13 +1,16 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OffersPlatform.Application.Features.Admin.Categories.Commands.CreateCategory;
+using OffersPlatform.Application.Features.Admin.Categories.Queries.GetAllCategories;
+using OffersPlatform.Application.Features.Admin.Categories.Queries.GetCategoryById;
 
 namespace OffersPlatform.API.Controllers.v1.Admin;
 
 
 [ApiController]
 [Authorize(Roles = "Admin")]
-[Route("api/v1/admin")]
+[Route("api/v1/admin/categories")]
 public class CategoriesController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -17,35 +20,35 @@ public class CategoriesController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("categories")]
+    [HttpGet()]
     public async Task<IActionResult> GetAllCategories(CancellationToken cancellationToken)
     {
-        return Ok();
+        var query = new GetAllCategoriesQuery();
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
     }
     
-    [HttpGet("categories/{categoryId}")]
+    [HttpGet("{categoryId}")]
     public async Task<IActionResult> GetCategoryById(Guid categoryId, CancellationToken cancellationToken)
     {
-        return Ok();
+        var query = new GetCategoryByIdQuery(categoryId);
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
     }
     
-    [HttpPost("categories")]
-    public async Task<IActionResult> AddCategory(Guid id, CancellationToken cancellationToken)
+    [HttpPost("")]
+    public async Task<IActionResult> AddCategory(string name, string description, CancellationToken cancellationToken)
     {
-        return Ok();
+        var command = new CreateCategoryCommand(name, description);
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
     
-    [HttpPost("categories/{categoryId}")]
-    public async Task<IActionResult> UpdateCategory(Guid categoryId, CancellationToken cancellationToken)
-    {
-        return Ok();
-    }
     
-    [HttpDelete("categories/{categoryId}")]
+    [HttpDelete("{categoryId}")]
     public async Task<IActionResult> DeleteCategory(Guid categoryId, CancellationToken cancellationToken)
     {
         return Ok();
     }
-    
     
 }

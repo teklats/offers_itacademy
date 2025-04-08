@@ -5,7 +5,7 @@ using OffersPlatform.Application.Features.Admin.Companies.Queries.GetCompanyById
 namespace OffersPlatform.API.Controllers.v1.Companies;
 
 [ApiController]
-[Route("api/v1/companies")]
+[Route("api/v1/companies/profile")]
 public class CompanyProfileController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -15,7 +15,7 @@ public class CompanyProfileController : ControllerBase
         _mediator = mediator;
     }
     
-    [HttpGet("profile")]
+    [HttpGet]
     public async Task<IActionResult> GetCompanyProfile(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetCompanyByIdQuery(id);
@@ -23,13 +23,13 @@ public class CompanyProfileController : ControllerBase
         return Ok(company);
     }
 
-    [HttpPut("profile")]
+    [HttpPut]
     public async Task<IActionResult> UpdateCompanyProfile(Guid id, CancellationToken cancellationToken)
     {
         return Ok();
     }
 
-    [HttpPost("profile/photo")]
+    [HttpPost("photo")]
     public async Task<IActionResult> UploadCompanyPhoto(Guid id, string imageUrl,CancellationToken cancellationToken)
     {
         return Ok();

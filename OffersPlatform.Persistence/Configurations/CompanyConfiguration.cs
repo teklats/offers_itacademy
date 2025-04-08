@@ -29,6 +29,11 @@ namespace OffersPlatform.Persistence.Configurations
 
             builder.Property(x => x.ImageUrl)
                 .HasMaxLength(1000);  // Optional field for image URL
+            
+            builder.Property(x => x.Balance)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)")
+                .HasDefaultValue(0);
 
             builder.Property(x => x.Status)
                 .HasConversion<int>()

@@ -52,11 +52,11 @@ public static class DependencyInjection
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!)),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidIssuer = jwtSettings["Jwt:Issuer"],
-                ValidAudience = jwtSettings["Jwt:Audience"],
-                ClockSkew = TimeSpan.FromHours(1)
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                ClockSkew = TimeSpan.Zero
             };
         });
     }

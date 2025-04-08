@@ -1,10 +1,19 @@
+using System.Security.Claims;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OffersPlatform.Application.DTOs;
+using OffersPlatform.Application.Features.Companies.Offers.Commands.CancelOffer;
+using OffersPlatform.Application.Features.Companies.Offers.Commands.CreateOffer;
+using OffersPlatform.Application.Features.Companies.Offers.Queries.GetCompanyOffers;
+using OffersPlatform.Application.Features.Companies.Offers.Queries.GetOfferById;
+using OffersPlatform.Domain.Entities;
 
 namespace OffersPlatform.API.Controllers.v1.Companies;
 
 [ApiController]
-[Route("api/v1/companies")]
+[Authorize]
+[Route("api/v1/companies/offers")]
 public class CompanyOffersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -14,43 +23,59 @@ public class CompanyOffersController : ControllerBase
         _mediator = mediator;
     }
     
-    [HttpGet("offers")]
-    public async Task<IActionResult> GetCompanyOffers()
+    [HttpGet]
+    public async Task<IActionResult> GetCompanyAllOffers()
     {
-        return Ok();
+        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(currentCompanyId, out var companyId))
+        {
+            return Forbid("Invalid user ID.");
+        }
+        var query = new GetAllOfferQuery(companyId);
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
-    [HttpGet("offers/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetOfferDetails(Guid id)
     {
-        return Ok();
+        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(currentCompanyId, out var companyId))
+        {
+            return Forbid("Invalid user ID.");
+        }
+        var query = new GetOfferByIdQuery(companyId, id);
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
-    [HttpPost("offers")]
-    public async Task<IActionResult> CreateOffer()
+    [HttpPost]
+    public async Task<IActionResult> CreateOffer([FromBody] OfferCreateDto request)
     {
-        return Ok();
+        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(currentCompanyId, out var companyId))
+        {
+            return Forbid("Invalid user ID.");
+        }
+        var command = new CreateOfferCommand(request, companyId);
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 
-    [HttpPut("offers/{id}")]
-    public async Task<IActionResult> UpdateOffer(Guid id)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> CancelOffer(Guid Id)
     {
-        return Ok();
+        var currentCompanyId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(currentCompanyId, out var companyId))
+        {
+            return Forbid("Invalid user ID.");
+        }
+        var command = new CancelOfferCommand(companyId, Id);
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 
-    [HttpDelete("offers/{id}")]
-    public async Task<IActionResult> CancelOffer(Guid id)
-    {
-        return Ok();
-    }
-
-    [HttpGet("offers/archived")]
-    public async Task<IActionResult> GetArchivedOffers()
-    {
-        return Ok();
-    }
-
-    [HttpPost("offers/{id}/photo")]
+    [HttpPost("{id}/photo")]
     public async Task<IActionResult> UploadOfferPhoto(Guid id)
     {
         return Ok();

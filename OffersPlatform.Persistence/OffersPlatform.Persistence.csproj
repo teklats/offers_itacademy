@@ -25,9 +25,6 @@
       <ProjectReference Include="..\OffersPlatform.Application\OffersPlatform.Application.csproj" />
         
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
    
 
 </Project>

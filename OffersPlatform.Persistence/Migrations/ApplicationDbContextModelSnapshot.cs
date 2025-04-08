@@ -22,6 +22,62 @@ namespace OffersPlatform.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Offer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AvailableQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("InitialQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Active");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Offers");
+                });
+
             modelBuilder.Entity("OffersPlatform.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -32,6 +88,7 @@ namespace OffersPlatform.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -53,6 +110,11 @@ namespace OffersPlatform.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Balance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0m);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -96,73 +158,11 @@ namespace OffersPlatform.Persistence.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("OffersPlatform.Domain.Entities.Offer", b =>
+            modelBuilder.Entity("OffersPlatform.Domain.Entities.Purchase", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AvailableQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CategoryId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("InitialQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CategoryId1");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Offers");
-                });
-
-            modelBuilder.Entity("OffersPlatform.Domain.Entities.Purchase", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CancelledAt")
                         .HasColumnType("datetime2");
@@ -204,8 +204,10 @@ namespace OffersPlatform.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Balance")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("Balance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0m);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -254,35 +256,23 @@ namespace OffersPlatform.Persistence.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CategoryId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "CategoryId");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CategoryId1");
-
                     b.ToTable("UserCategories");
                 });
 
-            modelBuilder.Entity("OffersPlatform.Domain.Entities.Offer", b =>
+            modelBuilder.Entity("Offer", b =>
                 {
                     b.HasOne("OffersPlatform.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Offers")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("OffersPlatform.Domain.Entities.Category", null)
-                        .WithMany("Offers")
-                        .HasForeignKey("CategoryId1");
 
                     b.HasOne("OffersPlatform.Domain.Entities.Company", "Company")
                         .WithMany("Offers")
@@ -297,7 +287,7 @@ namespace OffersPlatform.Persistence.Migrations
 
             modelBuilder.Entity("OffersPlatform.Domain.Entities.Purchase", b =>
                 {
-                    b.HasOne("OffersPlatform.Domain.Entities.Offer", "Offer")
+                    b.HasOne("Offer", "Offer")
                         .WithMany("Purchases")
                         .HasForeignKey("OfferId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -317,14 +307,10 @@ namespace OffersPlatform.Persistence.Migrations
             modelBuilder.Entity("OffersPlatform.Domain.Entities.UserCategory", b =>
                 {
                     b.HasOne("OffersPlatform.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("UserCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("OffersPlatform.Domain.Entities.Category", null)
-                        .WithMany("UserCategories")
-                        .HasForeignKey("CategoryId1");
 
                     b.HasOne("OffersPlatform.Domain.Entities.User", "User")
                         .WithMany("PreferredCategories")
@@ -337,6 +323,11 @@ namespace OffersPlatform.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Offer", b =>
+                {
+                    b.Navigation("Purchases");
+                });
+
             modelBuilder.Entity("OffersPlatform.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Offers");
@@ -347,11 +338,6 @@ namespace OffersPlatform.Persistence.Migrations
             modelBuilder.Entity("OffersPlatform.Domain.Entities.Company", b =>
                 {
                     b.Navigation("Offers");
-                });
-
-            modelBuilder.Entity("OffersPlatform.Domain.Entities.Offer", b =>
-                {
-                    b.Navigation("Purchases");
                 });
 
             modelBuilder.Entity("OffersPlatform.Domain.Entities.User", b =>

@@ -4,6 +4,6 @@ public enum OfferStatus
 {
     Active = 1,
     Expired = 2,
-    Cancelled = 3,
+    Canceled = 3,
     Archived = 4,
 }

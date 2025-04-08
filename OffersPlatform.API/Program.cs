@@ -1,3 +1,4 @@
+using OffersPlatform.API.Middleware;
 using OffersPlatform.Application.DependencyInjection;
 using OffersPlatform.Infrastructure.DependencyInjection;
 using OffersPlatform.Persistence.DependencyInjection;
@@ -29,6 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();  

@@ -22,7 +22,7 @@ public class CompanyManagementController : ControllerBase
         _mediator = mediator;
     }
     
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<IActionResult> GetAllCompanies(CancellationToken cancellationToken = default)
     {
         var query = new GetAllCompaniesQuery();
@@ -30,7 +30,7 @@ public class CompanyManagementController : ControllerBase
         return Ok(companies);
     }
 
-    [HttpGet("active")]
+    [HttpGet("all/active")]
     public async Task<IActionResult> GetAllActiveCompanies(CancellationToken cancellationToken)
     {
         var query = new GetAllActiveCompaniesQuery();

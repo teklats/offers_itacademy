@@ -1,7 +1,9 @@
+using System.Net;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Application.DTOs;
+using OffersPlatform.Application.Exceptions;
 using OffersPlatform.Domain.Enums;
 
 namespace OffersPlatform.Application.Features.Auth.CompanyAuth.Commands.RegisterCompany;
@@ -26,7 +28,7 @@ public class RegisterCompanyCommandHandler : IRequestHandler<RegisterCompanyComm
         var hashedPassword = _passwordHasher.HashPassword(command.Password);
         if (await _companyRepository.GetCompanyByEmailAsync(command.Email, cancellationToken) is not null)
         {
-            throw new Exception("Already exists");
+            throw new AlreadyExistsException("Company Already Exists.");
         }
         var company = new Domain.Entities.Company
         {

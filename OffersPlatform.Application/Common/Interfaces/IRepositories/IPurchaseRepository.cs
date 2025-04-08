@@ -1,10 +1,14 @@
 using OffersPlatform.Domain.Entities;
 namespace OffersPlatform.Application.Common.Interfaces.IRepositories;
+using OffersPlatform.Domain.Entities;
+
 public interface IPurchaseRepository
 {
-    Task<Purchase?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Purchase>> GetUserPurchasesAsync(Guid userId);
-    Task<IEnumerable<Purchase>> GetCompanySalesAsync(Guid companyId);
-    Task AddAsync(Purchase purchase);
-    Task CancelPurchaseAsync(Guid purchaseId);
+    Task AddAsync(Purchase purchase, CancellationToken cancellationToken);
+    Task<Purchase?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<IEnumerable<Purchase>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+    Task<IEnumerable<Purchase>> GetByOfferIdAsync(Guid companyId, CancellationToken cancellationToken);
+    Task<IEnumerable<Guid>> GetUserByPurchaseId(Guid purchaseId, CancellationToken cancellationToken);
+    Task DeleteAsync(Purchase purchase, CancellationToken cancellationToken);
+    Task UpdateAsync(Purchase purchase, CancellationToken cancellationToken);
 }

@@ -1,6 +1,8 @@
+using System.Net;
 using AutoMapper;
 using MediatR;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
+using OffersPlatform.Application.Exceptions;
 using OffersPlatform.Domain.Enums;
 
 
@@ -21,9 +23,9 @@ public class ApproveCompanyCommandHandler : IRequestHandler<ApproveCompanyComman
     {
         var company = await _companyRepository.GetCompanyByIdAsync(request.Id, cancellationToken);
 
-        if (company == null)
+        if (company is null)
         {
-            throw new Exception(message: "Company not found");
+            throw new NotFoundException("Company Not Found");
         }
 
         if (company.Status == CompanyStatus.Active)

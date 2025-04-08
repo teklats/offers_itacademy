@@ -10,11 +10,12 @@ public class User
     public string? Email { get; set; }
     public string? UserName { get; set; }
     public string? PasswordHash { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
-    public decimal? Balance { get; set; }
+    public decimal Balance { get; set; } = 0;
     public UserRole Role { get; set; }
     public bool IsActive { get; set; } = true;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    
     
     
     // Navigation Properties

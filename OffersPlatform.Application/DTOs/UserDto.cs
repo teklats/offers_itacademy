@@ -9,6 +9,13 @@ public class UserDto
     public string? UserName { get; set; }
     public string? Email { get; set; }
     public DateTime CreatedAt { get; set; }
+    public UserRole Role { get; set; }
+}
+
+public class UserBalanceDto
+{
+    public Guid Id { get; set; }
+    public decimal Balance { get; set; }
 }
 
 public class UserUpdateDto
@@ -28,17 +35,4 @@ public class UserPurchaseDto
 public class UserPreferredCategoriesDto
 {
     public List<Guid> CategoryIds { get; set; } = new();
-}
-
-public class RegisterUserDto
-{
-    public string? Username { get; set; }
-    public string? Email { get; set; }
-    public string? Password { get; set; }
-}
-
-public class LoginUserDto
-{
-    public string? Email { get; set; }
-    public string? Password { get; set; }
 }

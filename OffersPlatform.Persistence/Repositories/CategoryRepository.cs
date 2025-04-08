@@ -9,33 +9,29 @@ namespace OffersPlatform.Persistence.Repositories;
 
 public class CategoryRepository : Repository<Category>, ICategoryRepository
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
+    private readonly ApplicationDbContext _dbContext;
 
-    public CategoryRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+    public CategoryRepository(ApplicationDbContext context, IMapper mapper) : base(context)
     {
-        _context = context;
-        _mapper = mapper;
+        _dbContext = context;
     }
-
-  
-    public async Task<List<Category>> GetByIdsAsync(List<Guid> categoryIds, CancellationToken cancellationToken)
+    
+    public async Task<IEnumerable<Category?>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Categories
-            .Where(c => categoryIds.Contains(c.Id))
-            .ToListAsync(cancellationToken);
-    }
-
-    public async Task<IEnumerable<Category>> GetAllAsync(CancellationToken cancellationToken)
-    {
-        return await _context.Categories
+        return await _dbContext.Categories
             .ToListAsync(cancellationToken);
     }
 
     public async Task<Category?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken)
     {
-        return await _context.Categories
+        return await _dbContext.Categories
             .Where(c => c.Id == categoryId)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+    
+    public async Task AddAsync(Category category, CancellationToken cancellationToken)
+    {
+        await _dbContext.Categories.AddAsync(category, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

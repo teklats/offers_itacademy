@@ -33,8 +33,7 @@ public class AdminSeeder
                     LastName = "Admin",
                     Username = "admin",
                     Email = "admin@admin.com",
-                    Password = "admin",
-                    Role = UserRole.Admin
+                    Password = "admin"
                 };
 
                 var result = await _mediator.Send(adminUser);
