@@ -39,12 +39,12 @@ public class UsersManagementController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{userId}")]
-    public async Task<ActionResult> DeleteUser(Guid userId, CancellationToken cancellationToken)
-    {
-        await _mediator
-            .Send(new DeleteUserCommand(userId), cancellationToken)
-            .ConfigureAwait(false);
-        return Ok();
-    }
+    // [HttpDelete("{userId}")]
+    // public async Task<ActionResult> DeleteUser(Guid userId, CancellationToken cancellationToken)
+    // {
+    //     await _mediator
+    //         .Send(new DeleteUserCommand(userId), cancellationToken)
+    //         .ConfigureAwait(false);
+    //     return Ok();
+    // }
 }

@@ -1,9 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OffersPlatform.Application.Features.Auth.CompanyAuth.Commands.LoginCompany;
-using OffersPlatform.Application.Features.Auth.CompanyAuth.Commands.RegisterCompany;
-using OffersPlatform.Application.Features.Auth.UserAuth.Commands.LoginUser;
-using OffersPlatform.Application.Features.Auth.UserAuth.Commands.RegisterUser;
+using OffersPlatform.Application.Features.Auth.Commands.Register.RegisterCompany;
+using OffersPlatform.Application.Features.Auth.Commands.Register.RegisterUser;
+using OffersPlatform.Application.Features.Auth.Commands.Login;
 
 
 namespace OffersPlatform.API.Controllers.v1.Auth;
@@ -37,22 +36,13 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("login/user")]
-    public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand command, CancellationToken cancellationToken)
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginUser([FromBody] LoginCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator
             .Send(command, cancellationToken)
             .ConfigureAwait(false);
         return result != null ? Ok(result) : Unauthorized(result);
-    }
-
-    [HttpPost("login/company")]
-    public async Task<IActionResult> LoginCompany([FromBody] LoginCompanyCommand command, CancellationToken cancellationToken)
-    {
-        var result = await _mediator
-            .Send(command, cancellationToken)
-            .ConfigureAwait(false);
-        return Ok(result);
     }
 
 }

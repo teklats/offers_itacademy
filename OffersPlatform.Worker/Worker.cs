@@ -1,5 +1,4 @@
-
-using OffersPlatform.Application.Common.Interfaces.IRepositories;
+using OffersPlatform.Application.Common.Interfaces;
 
 namespace OffersPlatform.Worker
 {
@@ -7,7 +6,7 @@ namespace OffersPlatform.Worker
     {
         private readonly ILogger<Worker> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromMinutes(1);
+        private readonly TimeSpan _checkInterval = TimeSpan.FromMinutes(0.5);
 
         public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory)
         {
@@ -21,23 +20,26 @@ namespace OffersPlatform.Worker
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                using (var scope = _scopeFactory.CreateScope())
+                using var scope = _scopeFactory.CreateScope();
+
+                try
                 {
-                    try
-                    {
-                        var offerRepo = scope.ServiceProvider.GetRequiredService<IOfferRepository>();
-                        _logger.LogInformation("Checking for expired offers at: {time}", DateTimeOffset.Now);
-                        await offerRepo.ArchiveExpiredOffersAsync(stoppingToken)
-                            .ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error archiving expired offers");
-                    }
+                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+                    _logger.LogInformation("Checking for expired offers at: {time}", DateTimeOffset.Now);
+
+                    await unitOfWork.OfferRepository
+                        .ArchiveExpiredOffersAsync(stoppingToken)
+                        .ConfigureAwait(false);
+
+                    await unitOfWork.CommitAsync(stoppingToken).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error archiving expired offers");
                 }
 
-                await Task.Delay(_checkInterval, stoppingToken)
-                    .ConfigureAwait(false);
+                await Task.Delay(_checkInterval, stoppingToken).ConfigureAwait(false);
             }
 
             _logger.LogInformation("Offer archiving worker stopped at: {time}", DateTimeOffset.Now);

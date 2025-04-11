@@ -1,7 +1,7 @@
 
 using AutoMapper;
 using OffersPlatform.Application.DTOs;
-using OffersPlatform.Application.Features.Auth.UserAuth.Commands.RegisterUser;
+using OffersPlatform.Application.Features.Auth.Commands.Register.RegisterUser;
 using OffersPlatform.Domain.Entities;
 
 namespace OffersPlatform.Application.Mapping;
@@ -37,5 +37,6 @@ public class UserMappingProfile : Profile
         CreateMap<User, UserBalanceDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.Balance));
+
     }
 }

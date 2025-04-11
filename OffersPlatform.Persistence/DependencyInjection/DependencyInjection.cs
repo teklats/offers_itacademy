@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Persistence.Context;
+using OffersPlatform.Persistence.HealthCheckerService;
 using OffersPlatform.Persistence.Repositories;
 using OffersPlatform.Persistence.Seed;
 using OffersPlatform.Persistence.UnitOfWorkService;
@@ -26,12 +27,17 @@ public static class DependencyInjection
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IOfferRepository, OfferRepository>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
-
+        services.AddScoped<IDependencyHealthChecker, DependencyHealthChecker>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddScoped<AdminSeeder>();
-
         return services;
+    }
+
+    public static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var adminSeeder = scope.ServiceProvider.GetRequiredService<AdminSeeder>();
+        adminSeeder.Initialize(scope.ServiceProvider);
     }
 }

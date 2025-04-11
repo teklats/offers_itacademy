@@ -66,9 +66,9 @@ public class CompanyOffersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> CancelOffer(Guid Id, CancellationToken cancellationToken)
+    public async Task<IActionResult> CancelOffer(Guid OfferId, CancellationToken cancellationToken)
     {
-        var command = new CancelOfferCommand(GetCompanyId(), Id);
+        var command = new CancelOfferCommand(GetCompanyId(), OfferId);
         var result = await _mediator
             .Send(command, cancellationToken)
             .ConfigureAwait(false);

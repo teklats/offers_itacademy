@@ -1,21 +1,33 @@
+using AutoMapper;
 using MediatR;
-using OffersPlatform.Application.Common.Interfaces.IRepositories;
+using OffersPlatform.Application.Common.Interfaces;
+using OffersPlatform.Application.DTOs;
+using OffersPlatform.Application.Exceptions;
 using OffersPlatform.Domain.Entities;
 using OffersPlatform.Domain.Enums;
 
 namespace OffersPlatform.Application.Features.Companies.Offers.Commands.CreateOffer;
 
-public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Offer>
+public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, OfferResultDto>
 {
-    private readonly IOfferRepository _offerRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public CreateOfferCommandHandler(IOfferRepository offerRepository)
+    public CreateOfferCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _offerRepository = offerRepository;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<Offer> Handle(CreateOfferCommand request, CancellationToken cancellationToken)
+    public async Task<OfferResultDto> Handle(CreateOfferCommand request, CancellationToken cancellationToken)
     {
+        var companyIsActive = await _unitOfWork.CompanyRepository
+            .CompanyIsActiveAsync(request.CompanyId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!companyIsActive)
+            throw new ForbiddenException("Company is not active");
+
         var offer = new Offer
         {
             Id = Guid.NewGuid(),
@@ -23,17 +35,18 @@ public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Off
             Description = request.Description,
             UnitPrice = request.UnitPrice,
             InitialQuantity = request.InitialQuantity,
-            AvailableQuantity = request.AvailableQuantity,
-            CreatedAt = DateTime.UtcNow,
+            AvailableQuantity = request.InitialQuantity,
+            CreatedAt = DateTime.Now,
             ExpiresAt = request.ExpiresAt,
-            Status = OfferStatus.Active,
             CategoryId = request.CategoryId,
             CompanyId = request.CompanyId,
+            ImageUrl = request.ImageUrl,
+            Status = OfferStatus.Active
         };
 
-        await _offerRepository
-            .AddAsync(offer, cancellationToken)
-            .ConfigureAwait(false);
-        return offer;
+        await _unitOfWork.OfferRepository.AddAsync(offer, cancellationToken).ConfigureAwait(false);
+        await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+        return _mapper.Map<OfferResultDto>(offer);
     }
 }

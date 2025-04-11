@@ -2,11 +2,17 @@ using OffersPlatform.Application.Common.Interfaces.IRepositories;
 
 namespace OffersPlatform.Application.Common.Interfaces;
 
-public interface IUnitOfWork : IDisposable
+public interface IUnitOfWork
 {
-    IOfferRepository OfferRepository { get; }
     IUserRepository UserRepository { get; }
-    ICompanyRepository CompanyRepository { get; }
+    IOfferRepository OfferRepository { get; }
     IPurchaseRepository PurchaseRepository { get; }
-    Task<int> CommitAsync(CancellationToken cancellationToken);
+    ICompanyRepository CompanyRepository { get; }
+    ICategoryRepository CategoryRepository { get; }
+    IUserCategoryRepository UserCategoryRepository { get; }
+
+    Task BeginTransactionAsync(CancellationToken cancellationToken);
+    Task CommitAsync(CancellationToken cancellationToken);
+    Task RollbackAsync(CancellationToken cancellationToken);
 }
+

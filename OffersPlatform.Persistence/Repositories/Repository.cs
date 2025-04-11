@@ -17,12 +17,6 @@ namespace OffersPlatform.Persistence.Repositories
             _dbSet = context.Set<T>();
         }
 
-        public async Task AddAsync(T entity, CancellationToken cancellationToken)
-        {
-            await _dbSet.AddAsync(entity, cancellationToken)
-                .ConfigureAwait(false);
-        }
-
         public void Update(T entity)
         {
             _dbSet.Update(entity);

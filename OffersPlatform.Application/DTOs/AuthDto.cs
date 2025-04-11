@@ -1,3 +1,5 @@
+using OffersPlatform.Domain.Enums;
+
 namespace OffersPlatform.Application.DTOs;
 
 public class AuthDto
@@ -6,5 +8,6 @@ public class AuthDto
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public string? Email { get; set; }
-    
+    public UserRole Role { get; set; }
+
 }

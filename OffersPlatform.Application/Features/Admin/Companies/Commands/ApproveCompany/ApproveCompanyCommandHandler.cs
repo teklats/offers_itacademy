@@ -21,6 +21,8 @@ public class ApproveCompanyCommandHandler : IRequestHandler<ApproveCompanyComman
             .GetCompanyByIdAsync(request.Id, cancellationToken)
             .ConfigureAwait(false);
 
+        Console.WriteLine("Requested ID: " + request.Id);
+
         if (company is null)
         {
             throw new NotFoundException("Company Not Found");
@@ -31,7 +33,7 @@ public class ApproveCompanyCommandHandler : IRequestHandler<ApproveCompanyComman
             return false;
         }
         company.Status = request.Status;
-        _companyRepository.UpdateAsync(company);
+        await _companyRepository.UpdateAsync(company, cancellationToken).ConfigureAwait(false);
         await _companyRepository
             .SaveAsync(cancellationToken)
             .ConfigureAwait(false);

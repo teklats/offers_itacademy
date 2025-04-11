@@ -21,7 +21,7 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Configure entities
-        
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -32,6 +32,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Role).IsRequired().HasConversion<string>();
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e=> e.Balance).IsRequired().HasDefaultValue(0);
+            entity.Property(e => e.PhoneNumber).IsRequired();
 
             entity.HasMany(e => e.Purchases)
                 .WithOne(p => p.User)
@@ -47,21 +48,23 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Company>(entity =>
         {
             entity.HasKey(c => c.Id);
-            
+
             entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
             entity.Property(c => c.Email).IsRequired().HasMaxLength(150);
             entity.Property(c => c.PasswordHash).IsRequired();
             entity.Property(c => c.Status)
-                .HasConversion<int>() // Ensure that the enum is converted to int in the DB
+                .HasConversion<int>()
                 .HasDefaultValue(CompanyStatus.Inactive);
             entity.Property(c => c.CreatedAt).IsRequired();
             entity.Property(c => c.ImageUrl).HasMaxLength(500);
             entity.Property(c => c.Balance).IsRequired().HasDefaultValue(0);
-   
+            entity.Property(c => c.PhoneNumber).IsRequired();
+            entity.Property(c=>c.Address).IsRequired();
+
             entity.Property(c => c.Role)
                 .HasConversion<int>()
                 .HasDefaultValue(UserRole.Company);
-            
+
             entity
                 .HasMany(c => c.Offers)
                 .WithOne(o => o.Company)
@@ -75,7 +78,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
         });
-        
+
         modelBuilder.Entity<Offer>(entity =>
         {
             entity.HasKey(e => e.Id);

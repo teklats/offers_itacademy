@@ -1,6 +1,6 @@
 using AutoMapper;
 using MediatR;
-using OffersPlatform.Application.Common.Interfaces.IRepositories;
+using OffersPlatform.Application.Common.Interfaces;
 using OffersPlatform.Application.DTOs;
 using OffersPlatform.Domain.Entities;
 
@@ -8,12 +8,12 @@ namespace OffersPlatform.Application.Features.Admin.Categories.Commands.CreateCa
 
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public CreateCategoryCommandHandler(ICategoryRepository categoryRepository, IMapper mapper)
+    public CreateCategoryCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
@@ -24,12 +24,12 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             Id = Guid.NewGuid(),
             Name = request.Name,
             Description = request.Description,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         };
 
-        await _categoryRepository.AddAsync(category, cancellationToken)
-            .ConfigureAwait(false);
+        await _unitOfWork.CategoryRepository.AddAsync(category, cancellationToken).ConfigureAwait(false);
+        await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
 
         return _mapper.Map<CategoryDto>(category);
     }

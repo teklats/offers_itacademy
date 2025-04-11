@@ -58,7 +58,7 @@ public class PurchaseOfferCommandHandler : IRequestHandler<PurchaseOfferCommand,
                 Quantity = request.Quantity,
                 TotalPrice = totalPrice,
                 Status = PurchaseStatus.Completed,
-                PurchasedAt = DateTime.UtcNow
+                PurchasedAt = DateTime.Now
             };
 
             // Save changes in a single transaction
@@ -71,10 +71,13 @@ public class PurchaseOfferCommandHandler : IRequestHandler<PurchaseOfferCommand,
             await _unitOfWork.UserRepository
                 .UpdateAsync(user, cancellationToken)
                 .ConfigureAwait(false);
-            _unitOfWork.CompanyRepository.UpdateAsync(company);
+            await _unitOfWork
+                .CompanyRepository.UpdateAsync(company, cancellationToken).ConfigureAwait(false);
 
             // Commit all changes
-            // await _unitOfWork.CommitTransactionAsync(cancellationToken);
+            await _unitOfWork
+                .CommitAsync(cancellationToken)
+                .ConfigureAwait(false);
 
             return _mapper.Map<PurchaseDto>(purchase);
         }
@@ -88,7 +91,7 @@ public class PurchaseOfferCommandHandler : IRequestHandler<PurchaseOfferCommand,
 
     private static void ValidateOffer(Offer? offer, int quantity)
     {
-        if (offer is null || offer.Status != OfferStatus.Active || offer.ExpiresAt <= DateTime.UtcNow)
+        if (offer is null || offer.Status != OfferStatus.Active || offer.ExpiresAt <= DateTime.Now)
             throw new Exception("Offer is not available");
 
         if (offer.AvailableQuantity < quantity)

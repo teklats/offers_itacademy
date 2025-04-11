@@ -17,19 +17,25 @@ public class CancelPurchaseCommandHandler : IRequestHandler<CancelPurchaseComman
 
     public async Task<bool> Handle(CancelPurchaseCommand request, CancellationToken cancellationToken)
     {
-        var purchase = await ValidatePurchase(request.PurchaseId, request.UserId, cancellationToken).ConfigureAwait(false);
-        var user = await ValidateUser(request.UserId, cancellationToken).ConfigureAwait(false);
-        var offer = await ValidateOffer(purchase.OfferId, cancellationToken).ConfigureAwait(false);
-        var company = await ValidateCompany(offer.CompanyId, cancellationToken).ConfigureAwait(false);
+        await _unitOfWork.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        await CancelPurchase(purchase, offer, user, company, cancellationToken)
-            .ConfigureAwait(false);
+        try
+        {
+            var purchase = await ValidatePurchase(request.PurchaseId, request.UserId, cancellationToken).ConfigureAwait(false);
+            var user = await ValidateUser(request.UserId, cancellationToken).ConfigureAwait(false);
+            var offer = await ValidateOffer(purchase.OfferId, cancellationToken).ConfigureAwait(false);
+            var company = await ValidateCompany(offer.CompanyId, cancellationToken).ConfigureAwait(false);
 
-        await _unitOfWork
-            .CommitAsync(cancellationToken)
-            .ConfigureAwait(false);
+            await CancelPurchase(purchase, offer, user, company, cancellationToken).ConfigureAwait(false);
 
-        return true;
+            await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            throw new Exception("Transaction failed: " + ex.Message, ex);
+        }
     }
 
     private async Task<Purchase> ValidatePurchase(Guid purchaseId, Guid userId, CancellationToken cancellationToken)
@@ -40,7 +46,7 @@ public class CancelPurchaseCommandHandler : IRequestHandler<CancelPurchaseComman
         if (purchase is null || purchase.UserId != userId)
             throw new NotFoundException("Purchase Not Found");
 
-        if (purchase.PurchasedAt.AddMinutes(5) < DateTime.UtcNow)
+        if (purchase.PurchasedAt.AddMinutes(5) < DateTime.Now)
             throw new Exception("Purchase can only be canceled within 5 minutes.");
 
         return purchase;
@@ -82,23 +88,15 @@ public class CancelPurchaseCommandHandler : IRequestHandler<CancelPurchaseComman
     private async Task CancelPurchase(Purchase purchase, Offer offer, User user, Company company, CancellationToken cancellationToken)
     {
         user.Balance += purchase.TotalPrice;
-
         offer.AvailableQuantity += purchase.Quantity;
-
         company.Balance -= purchase.TotalPrice;
 
         purchase.Status = PurchaseStatus.Cancelled;
-        purchase.CancelledAt = DateTime.UtcNow;
+        purchase.CancelledAt = DateTime.Now;
 
-        await _unitOfWork.PurchaseRepository
-            .UpdateAsync(purchase, cancellationToken)
-            .ConfigureAwait(false);
-        await _unitOfWork.OfferRepository
-            .UpdateAsync(offer, cancellationToken)
-            .ConfigureAwait(false);
-        await _unitOfWork.UserRepository
-            .UpdateAsync(user, cancellationToken)
-            .ConfigureAwait(false);
-        _unitOfWork.CompanyRepository.UpdateAsync(company);
+        await _unitOfWork.PurchaseRepository.UpdateAsync(purchase, cancellationToken).ConfigureAwait(false);
+        await _unitOfWork.OfferRepository.UpdateAsync(offer, cancellationToken).ConfigureAwait(false);
+        await _unitOfWork.UserRepository.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
+        await _unitOfWork.CompanyRepository.UpdateAsync(company, cancellationToken).ConfigureAwait(false);
     }
 }

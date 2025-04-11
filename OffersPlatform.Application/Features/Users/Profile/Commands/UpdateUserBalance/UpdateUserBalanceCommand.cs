@@ -3,7 +3,7 @@ using OffersPlatform.Application.DTOs;
 
 namespace OffersPlatform.Application.Features.Users.Profile.Commands.UpdateUserBalance;
 
-public class UpdateUserBalanceCommand : IRequest<UserBalanceDto>
+public class UpdateUserBalanceCommand : IRequest<UserBalanceDto?>
 {
     public Guid Id { get; set; }
     public decimal Balance { get; set; }

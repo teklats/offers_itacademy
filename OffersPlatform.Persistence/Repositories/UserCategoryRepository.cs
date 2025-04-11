@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OffersPlatform.Application.Common.Interfaces.IRepositories;
 using OffersPlatform.Domain.Entities;
@@ -10,7 +9,7 @@ public class UserCategoryRepository : Repository<UserCategory>, IUserCategoryRep
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public UserCategoryRepository(ApplicationDbContext context, IMapper mapper) : base(context)
+    public UserCategoryRepository(ApplicationDbContext context) : base(context)
     {
         _dbContext = context;
     }
@@ -27,8 +26,7 @@ public class UserCategoryRepository : Repository<UserCategory>, IUserCategoryRep
     public async Task<UserCategory?> GetByUserIdAndCategoryIdAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.UserCategories
-            .Where(uc => uc.UserId == userId && uc.CategoryId == categoryId)
-            .FirstOrDefaultAsync(cancellationToken)
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CategoryId == categoryId, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -41,34 +39,31 @@ public class UserCategoryRepository : Repository<UserCategory>, IUserCategoryRep
             .ConfigureAwait(false);
     }
 
-    public async Task<UserCategory?> AddCategoryToPreferenceAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken)
+    public Task<UserCategory?> AddCategoryToPreferenceAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken)
     {
         var userCategory = new UserCategory
         {
             UserId = userId,
             CategoryId = categoryId,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.Now
         };
 
         _dbContext.UserCategories.Add(userCategory);
-        await _dbContext.SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
-        return userCategory;
+        return Task.FromResult<UserCategory?>(userCategory);
     }
 
     public async Task<bool> RemoveCategoryFromPreferenceAsync(Guid userId, Guid categoryId, CancellationToken cancellationToken)
     {
         var userPreference = await _dbContext.UserCategories
-            .FirstOrDefaultAsync(up => up.CategoryId == categoryId, cancellationToken)
+            .FirstOrDefaultAsync(up => up.UserId == userId && up.CategoryId == categoryId, cancellationToken)
             .ConfigureAwait(false);
 
         if (userPreference != null)
         {
             _dbContext.UserCategories.Remove(userPreference);
-            await _dbContext.SaveChangesAsync(cancellationToken)
-                .ConfigureAwait(false);
             return true;
         }
+
         return false;
     }
 }

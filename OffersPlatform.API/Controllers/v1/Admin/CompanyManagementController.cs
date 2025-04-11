@@ -73,15 +73,15 @@ public class CompanyManagementController : ControllerBase
         }
     }
 
-    [HttpDelete("{companyId}")]
-    public async Task<ActionResult> DeleteCompany(Guid companyId,
-        CancellationToken cancellationToken)
-    {
-        var query = new DeleteCompanyCommand(companyId);
-        var result = await _mediator
-            .Send(query, cancellationToken)
-            .ConfigureAwait(false);
-        return Ok(result);
-    }
+    // [HttpDelete("{companyId}")]
+    // public async Task<ActionResult> DeleteCompany(Guid companyId,
+    //     CancellationToken cancellationToken)
+    // {
+    //     var query = new DeleteCompanyCommand(companyId);
+    //     var result = await _mediator
+    //         .Send(query, cancellationToken)
+    //         .ConfigureAwait(false);
+    //     return Ok(result);
+    // }
 
 }

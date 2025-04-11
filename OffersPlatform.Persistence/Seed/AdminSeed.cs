@@ -1,31 +1,43 @@
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OffersPlatform.Application.Features.Auth.UserAuth.Commands.RegisterUser;
+using Microsoft.Extensions.DependencyInjection;
+using OffersPlatform.Application.Common.Interfaces;
+using OffersPlatform.Application.Features.Auth.Commands.Register.RegisterUser;
+using OffersPlatform.Domain.Entities;
 using OffersPlatform.Domain.Enums;
 using OffersPlatform.Persistence.Context;
-
 namespace OffersPlatform.Persistence.Seed;
 
 public class AdminSeeder
 {
-    private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
+    private readonly IPasswordHasher _passwordHasher;
     private readonly ApplicationDbContext _context;
 
-    public AdminSeeder(IMediator mediator, ApplicationDbContext context)
+    public void Initialize(IServiceProvider serviceProvider)
     {
-        _mediator = mediator;
-        _context = context;
+        using var scope = serviceProvider.CreateScope();
+
+        Migrate(_context);
+        SeedAdmin(_context);
     }
 
-    public async Task SeedAsync()
+    public AdminSeeder(IMapper mapper, ApplicationDbContext context, IPasswordHasher passwordHasher)
+    {
+        _mapper = mapper;
+        _context = context;
+        _passwordHasher = passwordHasher;
+    }
+
+    public void SeedAdmin(ApplicationDbContext context)
     {
         try
         {
             Console.WriteLine("Checking if Admin user exists...");
 
-            if (!await _context.Users.
-                    AnyAsync(u => u.Role == UserRole.Admin)
-                    .ConfigureAwait(false))
+            if (!_context.Users.
+                    Any(u => u.Role == UserRole.Admin))
             {
                 Console.WriteLine("Admin user not found. Creating...");
 
@@ -35,13 +47,17 @@ public class AdminSeeder
                     LastName = "Admin",
                     Username = "admin",
                     Email = "admin@admin.com",
-                    Password = "admin"
+                    Password = "Admin1",
+                    PhoneNumber = "123456789"
                 };
 
-                var result = await _mediator
-                    .Send(adminUser)
-                    .ConfigureAwait(false);
-                Console.WriteLine($"Admin creation result: {result}");
+                var user = _mapper.Map<User>(adminUser);
+                user.Role = UserRole.Admin;
+
+                user.PasswordHash = _passwordHasher.HashPassword(adminUser.Password);
+
+                context.Users.Add(user);
+                context.SaveChanges();
             }
             else
             {
@@ -53,4 +69,10 @@ public class AdminSeeder
             Console.WriteLine($"Error during seeding: {ex.Message}");
         }
     }
+
+    private static void Migrate(ApplicationDbContext context)
+    {
+        context.Database.Migrate();
+    }
+
 }

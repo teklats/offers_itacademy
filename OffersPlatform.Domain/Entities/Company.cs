@@ -11,7 +11,9 @@ public class Company
     public string? PasswordHash { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
     public decimal Balance { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string? PhoneNumber { get; set; }
+    public string? Address { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
     public UserRole Role { get; set; } = UserRole.Company;
     public CompanyStatus Status { get; set; } = CompanyStatus.Inactive;

@@ -5,7 +5,7 @@ using OffersPlatform.Domain.Entities;
 namespace OffersPlatform.Application.Features.Companies.Offers.Commands.CreateOffer;
 
 
-public class CreateOfferCommand : IRequest<Offer>
+public class CreateOfferCommand : IRequest<OfferResultDto>
 {
     public string? Name { get; set; }
     public string? Description { get; set; }
@@ -15,7 +15,8 @@ public class CreateOfferCommand : IRequest<Offer>
     public DateTime ExpiresAt { get; set; }
     public Guid CategoryId { get; set; }
     public Guid CompanyId { get; set; }
-    
+    public string ImageUrl { get; set; }
+
 
     public CreateOfferCommand(OfferCreateDto request, Guid companyId)
     {
@@ -26,6 +27,7 @@ public class CreateOfferCommand : IRequest<Offer>
         AvailableQuantity = request.AvailableQuantity;
         ExpiresAt = request.ExpiresAt;
         CategoryId = request.CategoryId;
+        ImageUrl = request.ImageUrl;
         CompanyId = companyId;
     }
 }

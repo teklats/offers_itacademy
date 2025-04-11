@@ -98,5 +98,12 @@ public class GlobalExceptionHandlerMiddleware
             Title = exception.Message;
         }
 
+        private void HandleException(ForbiddenException exception)
+        {
+            Code = exception.Code;
+            Status = (int)HttpStatusCode.Forbidden;
+            Title = exception.Message;
+        }
+
     }
 }

@@ -51,18 +51,18 @@ public class UserProfileController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("")]
-    public async Task<IActionResult> DeleteProfile(Guid id, CancellationToken cancellationToken)
-    {
-        if (id == GetUserId())
-        {
-            return BadRequest("Invalid user id");
-        }
-        var query = new DeleteUserCommand(id);
-        await _mediator
-            .Send(query, cancellationToken)
-            .ConfigureAwait(false);
-        return Ok();
-    }
+    // [HttpDelete("")]
+    // public async Task<IActionResult> DeleteProfile(Guid id, CancellationToken cancellationToken)
+    // {
+    //     if (id == GetUserId())
+    //     {
+    //         return BadRequest("Invalid user id");
+    //     }
+    //     var query = new DeleteUserCommand(id);
+    //     await _mediator
+    //         .Send(query, cancellationToken)
+    //         .ConfigureAwait(false);
+    //     return Ok();
+    // }
 
 }
