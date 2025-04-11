@@ -1,0 +1,63 @@
+@model OffersPlatform.MVC.Models.OfferCreateViewModel
+
+<div class="container mt-4">
+    <h2 class="mb-4">➕ Create New Offer</h2>
+
+    <form asp-action="CreateOffer" method="post" enctype="multipart/form-data" class="w-50">
+    <div class="mb-3">
+            <label asp-for="CategoryId" class="form-label"></label>
+            <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
+                <option value="">-- Select Category --</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Price" class="form-label"></label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="InitialQuantity" class="form-label"></label>
+            <input asp-for="InitialQuantity" class="form-control" />
+            <span asp-validation-for="InitialQuantity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ExpiresAt" class="form-label"></label>
+            <input asp-for="ExpiresAt" type="datetime-local" class="form-control"
+                   value="@Model.ExpiresAt.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.ToString(yyyy-MM-ddTHH:mm")/>
+            <span asp-validation-for="ExpiresAt" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageFile" class="form-label">Upload Image</label>
+            <input asp-for="ImageFile" type="file" class="form-control" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Create Offer</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+

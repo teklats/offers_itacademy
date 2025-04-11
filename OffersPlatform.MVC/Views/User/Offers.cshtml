@@ -1,0 +1,40 @@
+@model IEnumerable<OffersPlatform.Application.DTOs.OfferDto>
+
+<h2>Purchases</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>No offers available in your preferred categories.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+        <tr><th>Name</th><th>Description</th><th>Price</th><th>Qty</th><th>Expires</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var offer in Model)
+        {
+            <tr>
+                <td>@offer.Name</td>
+                <td>@offer.Description</td>
+                <td>$@offer.UnitPrice</td>
+                <td>@offer.AvailableQuantity</td>
+                <td>@offer.ExpiresAt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <form asp-action="PurchaseOffer" method="post" class="d-inline">
+                        <input type="hidden" name="offerId" value="@offer.Id" />
+                        <input type="number" name="quantity" min="1" max="@offer.AvailableQuantity" placeholder="Qty" class="form-control form-control-sm mb-1" required />
+                        <button type="submit" class="btn btn-sm btn-success">Buy</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,47 @@
+@model IEnumerable<OffersPlatform.Application.DTOs.CompanyDto>
+
+<div class="container mt-4">
+    <h2 class="mb-3">🏢 All Companies</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+        <tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var company in Model)
+        {
+            <tr>
+                <td>@company.Name</td>
+                <td>@company.Email</td>
+                <td>
+                    <span class="badge @(company.Status == OffersPlatform.Domain.Enums.CompanyStatus.Active ? "bg-success" : "bg-secondary")">
+                        @company.Status
+                    </span>
+                </td>
+                <td>
+                    @if (company.Status != OffersPlatform.Domain.Enums.CompanyStatus.Active)
+                    {
+                        <form asp-action="ApproveCompany" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@company.Id" />
+                            <button class="btn btn-sm btn-success">Activate</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-success">✔️ Active</span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

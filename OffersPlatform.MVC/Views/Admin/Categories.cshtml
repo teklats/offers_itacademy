@@ -1,0 +1,23 @@
+@model IEnumerable<OffersPlatform.Application.DTOs.CategoryDto>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📁 All Categories</h2>
+        <a class="btn btn-primary" asp-action="CreateCategory">+ Add New Category</a>
+    </div>
+
+    <table class="table table-hover table-bordered">
+        <thead class="table-light">
+        <tr><th>Name</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var cat in Model)
+        {
+            <tr>
+                <td>@cat.Name</td>
+                <td>@cat.Description</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

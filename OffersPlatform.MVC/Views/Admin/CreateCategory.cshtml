@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">📁 Create New Category</h2>
+
+    <form asp-action="CreateCategory" method="post" class="w-50">
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input name="name" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Create</button>
+    </form>
+</div>

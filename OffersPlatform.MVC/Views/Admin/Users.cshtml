@@ -1,0 +1,20 @@
+@model IEnumerable<OffersPlatform.Application.DTOs.UserDto>
+
+<div class="container mt-4">
+    <h2 class="mb-3">👥 All Users</h2>
+    <table class="table table-hover table-bordered">
+        <thead class="table-light">
+        <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.UserName</td>
+                <td>@u.Email</td>
+                <td>@u.PhoneNumber</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

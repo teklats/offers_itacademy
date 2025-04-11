@@ -1,0 +1,26 @@
+@model OffersPlatform.MVC.Models.CategoryPreferencesViewModel
+
+<h2>My Preferred Categories</h2>
+
+<ul>
+    @foreach (var id in Model.SelectedCategoryIds)
+    {
+        var cat = Model.AllCategories.FirstOrDefault(x => x.Value == id.ToString());
+        if (cat != null)
+        {
+            <li>
+                @cat.Text
+                <form asp-action="RemovePreferredCategory" method="post" class="d-inline">
+                    <input type="hidden" name="categoryId" value="@id" />
+                    <button class="btn btn-sm btn-danger">Remove</button>
+                </form>
+            </li>
+        }
+    }
+</ul>
+
+<h4>Add More</h4>
+<form asp-action="AddPreferredCategory" method="post">
+    <select name="categoryId" asp-items="Model.AllCategories" class="form-control"></select>
+    <button class="btn btn-success mt-2">Add</button>
+</form>

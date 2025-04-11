@@ -1,0 +1,38 @@
+@{
+    var offers = ViewData["MyOffers"] as List<OffersPlatform.Application.DTOs.OfferDto>;
+}
+
+@if (offers == null || !offers.Any())
+{
+    <div class="alert alert-info">No offers yet.</div>
+}
+else
+{
+    <table class="table table-hover table-bordered">
+        <thead class="table-light">
+        <tr><th>Name</th><th>Qty</th><th>Price</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var o in offers)
+        {
+            <tr>
+                <td>@o.Name</td>
+                <td>@o.AvailableQuantity</td>
+                <td>$@o.UnitPrice</td>
+                <td>
+                    <span class="badge @(o.Status == OffersPlatform.Domain.Enums.OfferStatus.Archived ? "bg-secondary" : "bg-success")">
+                        @o.Status
+                    </span>
+                </td>
+                <td class="d-flex gap-2">
+                    <a asp-action="OfferDetails" asp-route-id="@o.Id" class="btn btn-sm btn-info">View</a>
+                    <form asp-action="CancelOffer" method="post">
+                        <input type="hidden" name="id" value="@o.Id" />
+                        <button class="btn btn-sm btn-danger">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

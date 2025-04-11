@@ -1,0 +1,60 @@
+@model IEnumerable<OffersPlatform.Application.DTOs.PurchaseDto>
+
+<div class="container mt-4">
+    <h2 class="mb-4">🧾 My Purchase History</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Profile" class="btn btn-outline-secondary">Back to Profile</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have not made any purchases yet.</div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Offer</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Purchased At</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var purchase in Model)
+            {
+                var canCancel = purchase.PurchasedAt.AddMinutes(5) > DateTime.Now && purchase.Status.ToString().ToLower() == "completed";
+                <tr>
+                    <td>@purchase.OfferName</td>
+                    <td>@purchase.Quantity</td>
+                    <td>$@purchase.TotalPrice</td>
+                    <td>@purchase.PurchasedAt.ToString("g")</td>
+                    <td>@purchase.Status</td>
+                    <td>
+                        @if (canCancel)
+                        {
+                            <form asp-action="CancelPurchase" method="post">
+                                <input type="hidden" name="id" value="@purchase.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                            </form>
+
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
